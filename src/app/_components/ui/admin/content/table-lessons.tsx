@@ -25,6 +25,7 @@ import { Textarea } from "../../textarea";
 import { createLessonSchema, updateLessonSchema } from "~/lib/schemas";
 import { PlusIcon } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "../../breadcrumb";
+import { useRouter } from "next/navigation";
 
 type Column = {
     id: string;
@@ -318,6 +319,7 @@ function NewLessonDialog({ onRefresh, moduleId }: { onRefresh: () => Promise<voi
                                     <div className="relative">
                                         <Textarea
                                             {...field}
+                                            value={field.value ?? ""}
                                             placeholder="Your description here"
                                             className="min-h-32"
                                             maxLength={500}
@@ -354,6 +356,7 @@ function NewLessonDialog({ onRefresh, moduleId }: { onRefresh: () => Promise<voi
 
 export function TableLessons({ moduleId, courseId, courseName, moduleName }: { moduleId: string, courseId: string, courseName: string, moduleName: string }) {
     const lessons = api.admin.getLessons.useQuery({ moduleId });
+    const router = useRouter()
 
     const refreshLessons = useCallback(async () => {
         await lessons.refetch()
@@ -400,6 +403,7 @@ export function TableLessons({ moduleId, courseId, courseName, moduleName }: { m
                     videoUrl: false,
                     presentationUrl: false,
                 }}
+                onTableRowClick={(row) => router.push(`/admin/content/${courseId}/${moduleId}/${row.getValue<string>("id")}`)}
             />
         </>
     )

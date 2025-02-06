@@ -27,3 +27,6 @@ export type StripeSubscriptionStatus =
     (typeof schema.stripeSubscriptionStatus.enumValues)[number];
 
 export type DBUser = InferSelectModel<typeof schema.user>;
+export type DBCourse = InferSelectModel<typeof schema.courses>;
+export type DBModule = InferSelectModel<typeof schema.modules>;
+export type DBLesson = InferSelectModel<typeof schema.lessons>;

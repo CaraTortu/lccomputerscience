@@ -27,6 +27,7 @@ import { Textarea } from "../../textarea";
 import { createCourseSchema, updateCourseSchema } from "~/lib/schemas";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from "../../breadcrumb";
 
 type Column = {
     id: string;
@@ -395,7 +396,13 @@ export function TableContent() {
     return (
         <>
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Courses</h1>
+                <Breadcrumb>
+                    <BreadcrumbList className="text-lg">
+                        <BreadcrumbItem className="text-black dark:text-primary-foreground">
+                            Courses
+                        </BreadcrumbItem>
+                    </BreadcrumbList>
+                </Breadcrumb>
                 <NewCourseDialog onRefresh={refreshCourses} />
             </div>
             <DataTable

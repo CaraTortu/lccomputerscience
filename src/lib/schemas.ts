@@ -140,7 +140,7 @@ export const createLessonSchema = z.object({
     description: z
         .string()
         .max(200, "Description must be less than 200 characters")
-        .optional(),
+        .nullish(),
     duration: z.number().int().positive("Duration must be a positive number"),
     content: z.string().nullish(),
     videoUrl: z.string().url("Video URL is invalid").nullish(),
