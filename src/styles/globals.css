@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lexend:wght@100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 241.9 0% 93.5%;
+        --foreground: 241.9 0% 6.8%;
+        --card: 241.9 0% 93.5%;
+        --card-foreground: 241.9 0% 11.8%;
+        --popover: 241.9 0% 96.8%;
+        --popover-foreground: 241.9 95% 3.5%;
+        --primary: 241.9 73% 56.5%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 241.9 10% 77%;
+        --secondary-foreground: 0 0% 0%;
+        --muted: 279.9 10% 88.5%;
+        --muted-foreground: 241.9 0% 36.8%;
+        --accent: 279.9 10% 83.5%;
+        --accent-foreground: 241.9 0% 11.8%;
+        --destructive: 0 50% 37%;
+        --destructive-foreground: 241.9 0% 93.5%;
+        --border: 241.9 20% 61.2%;
+        --input: 241.9 20% 29.2%;
+        --ring: 241.9 88.7% 45.3%;
+        --radius: 0.5rem;
+        --sidebar-background: 0 0% 98%;
+        --sidebar-foreground: 240 5.3% 26.1%;
+        --sidebar-primary: 240 5.9% 10%;
+        --sidebar-primary-foreground: 0 0% 98%;
+        --sidebar-accent: 240 4.8% 95.9%;
+        --sidebar-accent-foreground: 240 5.9% 10%;
+        --sidebar-border: 220 13% 91%;
+        --sidebar-ring: 217.2 91.2% 59.8%;
+    }
+
+    .dark {
+        --background: 241.9 10% 6.8%;
+        --foreground: 241.9 0% 93.5%;
+        --card: 241.9 0% 3.5%;
+        --card-foreground: 241.9 0% 93.5%;
+        --popover: 241.9 10% 5%;
+        --popover-foreground: 241.9 0% 93.5%;
+        --primary: 241.9 73% 56.5%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 241.9 10% 13.5%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 279.9 10% 18.5%;
+        --muted-foreground: 241.9 0% 61.8%;
+        --accent: 279.9 10% 18.5%;
+        --accent-foreground: 241.9 0% 91.8%;
+        --destructive: 0 50% 37%;
+        --destructive-foreground: 241.9 0% 93.5%;
+        --border: 241.9 20% 29.2%;
+        --input: 241.9 20% 29.2%;
+        --ring: 241.9 88.7% 45.3%;
+        --radius: 0.5rem;
+        --sidebar-background: 240 5.9% 10%;
+        --sidebar-foreground: 240 4.8% 95.9%;
+        --sidebar-primary: 224.3 76.3% 48%;
+        --sidebar-primary-foreground: 0 0% 100%;
+        --sidebar-accent: 240 3.7% 15.9%;
+        --sidebar-accent-foreground: 240 4.8% 95.9%;
+        --sidebar-border: 240 3.7% 15.9%;
+        --sidebar-ring: 217.2 91.2% 59.8%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+
+    .mdPost {
+        @apply flex flex-col h-full flex-grow p-4 gap-4;
+    }
+
+    .mdPost>h1 {
+        @apply text-3xl font-bold;
+    }
+
+    .mdPost>h2 {
+        @apply text-2xl font-bold;
+    }
+
+    .mdPost>h3 {
+        @apply text-xl font-bold;
+    }
+
+    .mdPost>h4 {
+        @apply text-lg font-bold;
+    }
+
+    .mdPost>p {
+        @apply text-lg;
+    }
+
+    .mdPost>p>strong {
+        @apply font-bold;
+    }
+
+    .mdPost>p>em {
+        @apply italic;
+    }
+
+    .mdPost>p>a {
+        @apply text-primary underline hover:text-primary/70;
+    }
+
+    figure>pre {
+        @apply p-4 pr-12 size-fit rounded-lg;
+    }
+
+    code {
+        counter-reset: line;
+    }
+
+    code>[data-line]::before {
+        counter-increment: line;
+        content: counter(line);
+
+        @apply inline-block w-4 mr-8 text-right text-gray-500;
+    }
+
+    code[data-line-numbers-max-digits="2"]>[data-line]::before {
+        @apply w-8;
+    }
+
+    code[data-line-numbers-max-digits="3"]>[data-line]::before {
+        width: 3rem;
+        @apply w-12;
+    }
+}
