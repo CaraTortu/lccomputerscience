@@ -64,8 +64,8 @@ export default function ContactUs() {
     }
 
     return (
-        <div className="flex-grow flex flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div className="flex w-full max-w-screen-md flex-col gap-6">
+        <div className="grow flex flex-col items-center justify-center gap-6 p-6 md:p-10">
+            <div className="flex w-full max-w-(--breakpoint-md) flex-col gap-6">
                 <Card>
                     <CardHeader className="text-center">
                         <CardTitle className="text-xl">Contact us</CardTitle>

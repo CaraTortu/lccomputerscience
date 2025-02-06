@@ -12,8 +12,8 @@ export default async function Account() {
     }))!;
 
     return (
-        <div className="flex-grow flex flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <Card className="w-full max-w-screen-sm">
+        <div className="grow flex flex-col items-center justify-center gap-6 p-6 md:p-10">
+            <Card className="w-full max-w-(--breakpoint-sm)">
                 <CardHeader className="flex flex-row items-center gap-4">
                     <Avatar className="h-16 w-16">
                         <AvatarImage src={user.image ?? undefined} alt={user.name ?? "User"} />

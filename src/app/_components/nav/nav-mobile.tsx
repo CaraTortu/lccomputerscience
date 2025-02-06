@@ -77,7 +77,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="flex-grow" asChild>
+            <DropdownMenuTrigger className="grow" asChild>
                 <Button variant="outline" size="lg" className="px-2 h-full flex gap-4">
                     <Avatar className="h-8 w-8 rounded-lg">
                         <AvatarImage src={user.image!} alt="Profile picture" />
@@ -91,12 +91,12 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                     ) : (
                         <p>{user.email}</p>
                     )}
-                    <div className="flex-grow flex items-center justify-end">
+                    <div className="grow flex items-center justify-end">
                         <ChevronsUpDown className="size-4" />
                     </div>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" className="w-[--radix-dropdown-menu-trigger-width]" align="end" sideOffset={4}>
+            <DropdownMenuContent side="top" className="w-(--radix-dropdown-menu-trigger-width)" align="end" sideOffset={4}>
                 {user.tier !== "gold" && (
                     <>
                         <DropdownMenuGroup>
@@ -148,8 +148,8 @@ export default function MobileNav({ session }: { session: Session | null }) {
                     <Image src="/images/toplogo.png" alt="LC Computer Science" width={250} height={100} />
                 </SheetTitle>
                 <SheetDescription></SheetDescription>
-                <div className="flex flex-col flex-grow gap-4">
-                    <div className="flex-grow flex flex-col gap-4">
+                <div className="flex flex-col grow gap-4">
+                    <div className="grow flex flex-col gap-4">
                         {navbarLinks.filter(link => !link.hideIfLoggedIn).map((link) => (
                             <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600" onClick={() => setNavOpen(false)}>{link.name}</Link>
                         ))}

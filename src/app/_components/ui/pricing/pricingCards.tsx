@@ -64,7 +64,7 @@ export default function PricingCards({ cards, session }: { session: Session | nu
                     <CardHeader>
                         <CardTitle className="text-2xl font-bold text-center">{tier.name}</CardTitle>
                     </CardHeader>
-                    <CardContent className="flex-grow">
+                    <CardContent className="grow">
                         <p className="text-4xl font-bold text-center mb-6">
                             {tier.price}€
                             <span className="text-xl font-normal">/yr</span>

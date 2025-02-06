@@ -145,7 +145,7 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
     const courseId = (await params).courseId;
 
     return (
-        <div className="flex-grow h-full container mx-auto py-8">
+        <div className="grow h-full container mx-auto py-8">
             <Link href="/content" className="flex items-center text-blue-500 hover:underline mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Content

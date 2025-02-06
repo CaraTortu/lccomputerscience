@@ -134,7 +134,7 @@ export function UserEdit({ user }: { user: DBUser }) {
                                     )}
                                 />
                             </div>
-                            <div className="flex flex-grow justify-center">
+                            <div className="flex grow justify-center">
                                 <Separator orientation="vertical" />
                             </div>
                         </div>
@@ -193,7 +193,7 @@ export function UserEdit({ user }: { user: DBUser }) {
                                     )}
                                 />
                             </div>
-                            <div className="flex flex-grow justify-center">
+                            <div className="flex grow justify-center">
                                 <Separator orientation="vertical" />
                             </div>
                         </div>

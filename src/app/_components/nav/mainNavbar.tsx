@@ -21,7 +21,7 @@ export default async function NavBar() {
                 <Link href="/" className="h-16 flex items-center">
                     <Image src="/images/toplogo.png" alt="LC Computer Science" width={300} height={60} />
                 </Link>
-                <div className="flex-grow w-full flex items-center font-bold text-sidebar-foreground *:duration-100 gap-12">
+                <div className="grow w-full flex items-center font-bold text-sidebar-foreground *:duration-100 gap-12">
                     {navbarLinks.filter(link => !link.hideIfLoggedIn && !link.adminOnly).map((link) => (
                         <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600">{link.name}</Link>
                     ))}

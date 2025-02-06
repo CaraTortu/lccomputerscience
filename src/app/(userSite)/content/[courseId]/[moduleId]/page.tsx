@@ -44,7 +44,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
     const completedLessonsN = lessonsCompleted.filter(l => courseModule.lessons.some(lesson => lesson.id === l.lessonId)).length
 
     return (
-        <div className="flex-grow h-full container mx-auto py-8">
+        <div className="grow h-full container mx-auto py-8">
             <Link href={`/content/${courseId}`} className="flex items-center text-blue-500 hover:underline mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Course

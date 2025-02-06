@@ -9,7 +9,7 @@ export default function Footer() {
             {/* Copyright and Social Media in a Flexbox */}
             <div className="flex items-center w-full flex-wrap md:flex-nowrap gap-6">
                 <p className="text-nowrap text-black/70">{"©"} {currentYear} LCComputerScience.com</p>
-                <div className="flex-grow flex flex-col md:flex-row gap-2 md:gap-8 w-full md:items-center justify-center">
+                <div className="grow flex flex-col md:flex-row gap-2 md:gap-8 w-full md:items-center justify-center">
                     <Link href="/terms">Terms and Conditions</Link>
                     <Link href="/contact">Contact Us</Link>
                     <Link href="/grinds">Interested in Grinds</Link>

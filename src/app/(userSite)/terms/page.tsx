@@ -7,7 +7,7 @@ import { env } from "~/env";
 export default async function Terms() {
     return (
         <div className="p-10 pt-20 w-full flex items-center justify-center">
-            <Card className="max-w-screen-xl">
+            <Card className="max-w-(--breakpoint-xl)">
                 <CardHeader className="flex flex-col justify-center items-center">
                     <Image src="/assets/png/char.png" alt="LC Computer Science" width={150} height={150} />
                     <CardTitle className="text-3xl">LCComputerScience Terms and Conditions</CardTitle>

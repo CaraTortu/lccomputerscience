@@ -37,7 +37,7 @@ export default async function Home() {
 
     return (
         <div className="flex flex-col">
-            <section className="mt-[-4rem] w-full h-full min-h-dvh bg-gradient-to-r from-blue-500 to-green-400 dark:from-blue-800 dark:to-green-600 flex items-center justify-center">
+            <section className="mt-[-4rem] w-full h-full min-h-dvh bg-linear-to-r from-blue-500 to-green-400 dark:from-blue-800 dark:to-green-600 flex items-center justify-center">
                 <div className="mx-auto text-center text-white flex flex-col gap-2 items-center px-4">
                     <h1 className="text-3xl md:text-5xl font-bold">Ace Your Leaving Certificate Computer Science with confidence</h1>
                     <p className="text-xl md:text-2xl font-light">Comprehensive study materials, practice exams, and expert guidance to help you succeed.</p>

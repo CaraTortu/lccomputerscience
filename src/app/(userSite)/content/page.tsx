@@ -19,7 +19,7 @@ function ContentCell(course: ContentType) {
                     </CardContent>
                 </Link>
             ) : (
-                <CardContent className="p-4 flex flex-col gap-4 items-center justify-center filter blur-sm grayscale">
+                <CardContent className="p-4 flex flex-col gap-4 items-center justify-center filter blur-xs grayscale">
                     <Image className="aspect-square" src={course.image} alt={course.name} width={150} height={150} />
                     <h2 className="text-xl text-center">{course.name}</h2>
                 </CardContent>
@@ -35,7 +35,7 @@ export default async function Content() {
     });
 
     return (
-        <div className="flex-grow flex flex-col items-center w-full py-8">
+        <div className="grow flex flex-col items-center w-full py-8">
             <h1 className="text-2xl font-bold">Content</h1>
             <h3>Choose the topic you want to view</h3>
 

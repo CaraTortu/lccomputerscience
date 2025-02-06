@@ -108,7 +108,7 @@ export function DataTable<TData, TValue>({
                         />
                     </div>
                 )}
-                <div className="flex-grow flex justify-end">
+                <div className="grow flex justify-end">
                     <DataTableViewOptions table={table} />
                 </div>
             </div>
