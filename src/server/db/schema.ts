@@ -230,7 +230,9 @@ export const lessons = createTable("lessons", {
         .references(() => modules.id, { onDelete: "cascade" }),
     name: varchar("name", { length: 255 }).notNull(),
     description: text("description"),
-    content: text("content").notNull(),
+    content: text("content"),
+    videoUrl: text("video_url"),
+    presentationUrl: text("presentation_url"),
     duration: integer("duration").notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })

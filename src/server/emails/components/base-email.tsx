@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Container, Head, Html, Tailwind } from "@react-email/components";
 
 export function BaseEmail({ children }: Readonly<{ children: ReactNode }>) {

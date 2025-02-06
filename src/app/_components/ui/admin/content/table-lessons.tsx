@@ -22,16 +22,19 @@ import { Form, FormField } from "../../form";
 import { Input } from "../../input";
 import { Label } from "../../label";
 import { Textarea } from "../../textarea";
-import { createModuleSchema, updateModuleSchema } from "~/lib/schemas";
+import { createLessonSchema, updateLessonSchema } from "~/lib/schemas";
 import { PlusIcon } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "../../breadcrumb";
-import { useRouter } from "next/navigation";
 
 type Column = {
     id: string;
-    courseId: string;
+    moduleId: string;
     name: string;
     description: string | null;
+    content: string | null;
+    duration: number;
+    videoUrl: string | null;
+    presentationUrl: string | null;
     updatedAt: Date;
 }
 
@@ -41,8 +44,8 @@ const getColumns: (props: { onRefresh: () => Promise<void> }) => ColumnDef<Colum
         accessorKey: "id",
     },
     {
-        id: "courseId",
-        accessorKey: "courseId",
+        id: "moduleId",
+        accessorKey: "moduleId",
     },
     {
         accessorKey: "name",
@@ -54,6 +57,30 @@ const getColumns: (props: { onRefresh: () => Promise<void> }) => ColumnDef<Colum
         accessorKey: "description",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Description" />
+        ),
+    },
+    {
+        accessorKey: "content",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Content" />
+        ),
+    },
+    {
+        accessorKey: "duration",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Duration" />
+        ),
+    },
+    {
+        accessorKey: "videoUrl",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Video URL" />
+        ),
+    },
+    {
+        accessorKey: "presentationUrl",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Presentation URL" />
         ),
     },
     {
@@ -70,20 +97,24 @@ const getColumns: (props: { onRefresh: () => Promise<void> }) => ColumnDef<Colum
     }
 ];
 
-type EditSchema = z.infer<typeof updateModuleSchema>
+type EditSchema = z.infer<typeof updateLessonSchema>
 
 function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Promise<void> }) {
     const { toast } = useToast()
     const [dialogOpen, setDialogOpen] = useState(false)
-    const updateMutation = api.admin.updateModule.useMutation()
+    const updateMutation = api.admin.updateLesson.useMutation()
 
     const form = useForm({
-        resolver: zodResolver(updateModuleSchema),
+        resolver: zodResolver(updateLessonSchema),
         defaultValues: {
             id: row.getValue<string>("id"),
-            courseId: row.getValue<string>("courseId"),
+            moduleId: row.getValue<string>("moduleId"),
             name: row.getValue<string>("name"),
-            description: row.getValue<string>("description"),
+            description: row.getValue<string | undefined>("description"),
+            duration: row.getValue<number>("duration"),
+            content: row.getValue<string | undefined>("content"),
+            videoUrl: row.getValue<string | undefined>("videoUrl"),
+            presentationUrl: row.getValue<string | undefined>("presentationUrl"),
         }
     })
 
@@ -93,7 +124,7 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
         if (!result.success) {
             toast({
                 title: "Error",
-                description: "Module not found",
+                description: "Lesson not found",
                 variant: "destructive",
             })
             return
@@ -101,7 +132,7 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
 
         setDialogOpen(false)
         toast({
-            title: "Module updated successfully",
+            title: "Lesson updated successfully",
             duration: 2000,
         })
 
@@ -114,7 +145,7 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
                 <Button size="sm"><PencilIcon />Edit</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle>Edit Module - {row.getValue<string>("name")}</DialogTitle>
+                <DialogTitle>Edit Lesson - {row.getValue<string>("name")}</DialogTitle>
                 <Separator />
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 pt-4">
@@ -144,10 +175,22 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
                                             maxLength={500}
                                         />
                                         <div className="absolute bottom-2 right-4">
-                                            <span className="text-sm text-gray-500">{field.value.length}/200 characters</span>
+                                            <span className="text-sm text-gray-500">{field.value?.length}/200 characters</span>
                                         </div>
                                     </div>
                                     <p className="text-sm text-red-500">{fieldState.error?.message}</p>
+                                </div>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="duration"
+                            render={({ field, fieldState }) => (
+                                <div className="flex flex-col gap-2">
+                                    <Label htmlFor="duration">Duration in minutes</Label>
+                                    <Input value={field.value} onChange={(e) => field.onChange(Number(e.target.value))} id="duration" type="number" placeholder="Duration" />
+                                    <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
                                 </div>
                             )}
                         />
@@ -162,21 +205,21 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
 }
 
 function ActionsCell({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Promise<void> }) {
-    const deleteModuleMutation = api.admin.deleteModule.useMutation();
+    const deleteLessonMutation = api.admin.deleteLesson.useMutation();
     const [dropdownOpen, setDropdownOpen] = useState(false)
     const { toast } = useToast()
 
-    const deleteModule = async () => {
-        const deleted = await deleteModuleMutation.mutateAsync({ moduleId: row.getValue<string>("id") });
+    const deleteLesson = async () => {
+        const deleted = await deleteLessonMutation.mutateAsync({ lessonId: row.getValue<string>("id") });
         if (deleted.success) {
             await onRefresh()
             toast({
-                title: "Module deleted successfully",
+                title: "Lesson deleted successfully",
                 duration: 2000,
             })
         } else {
             toast({
-                title: "Failed to delete module. Try again later.",
+                title: "Failed to delete lesson. Try again later.",
                 variant: "destructive",
                 duration: 2000,
             })
@@ -196,30 +239,34 @@ function ActionsCell({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pr
             <DropdownMenuContent align="end" className="flex flex-col gap-2 p-2">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <EditDialog row={row} onRefresh={onRefresh} />
-                <Button size="sm" variant="destructive" onClick={() => deleteModule()}><Trash2Icon />Delete</Button>
+                <Button size="sm" variant="destructive" onClick={() => deleteLesson()}><Trash2Icon />Delete</Button>
             </DropdownMenuContent>
         </DropdownMenu>
     )
 }
 
-type CreateModuleSchema = z.infer<typeof createModuleSchema>
+type CreateLessonSchema = z.infer<typeof createLessonSchema>
 
-function NewModuleDialog({ onRefresh, courseId }: { onRefresh: () => Promise<void>, courseId: string }) {
-    const addNewModuleMutation = api.admin.createModule.useMutation()
+function NewLessonDialog({ onRefresh, moduleId }: { onRefresh: () => Promise<void>, moduleId: string }) {
+    const addNewLessonMutation = api.admin.createLesson.useMutation()
     const { toast } = useToast()
     const [dialogOpen, setDialogOpen] = useState(false)
 
-    const form = useForm<CreateModuleSchema>({
-        resolver: zodResolver(createModuleSchema),
+    const form = useForm<CreateLessonSchema>({
+        resolver: zodResolver(createLessonSchema),
         defaultValues: {
             name: "",
             description: "",
-            courseId,
+            duration: 10,
+            content: "",
+            videoUrl: "",
+            presentationUrl: "",
+            moduleId,
         }
     })
 
-    const onSubmit = async (data: CreateModuleSchema) => {
-        const result = await addNewModuleMutation.mutateAsync(data)
+    const onSubmit = async (data: CreateLessonSchema) => {
+        const result = await addNewLessonMutation.mutateAsync(data)
 
         if (!result.success) {
             toast({
@@ -232,7 +279,7 @@ function NewModuleDialog({ onRefresh, courseId }: { onRefresh: () => Promise<voi
 
         setDialogOpen(false)
         toast({
-            title: "Module added successfully",
+            title: "Lesson added successfully",
             duration: 2000,
         })
 
@@ -242,15 +289,14 @@ function NewModuleDialog({ onRefresh, courseId }: { onRefresh: () => Promise<voi
     return (
         <Dialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)}>
             <DialogTrigger asChild>
-                <Button className="flex gap-2"><PlusIcon />Add New Module</Button>
+                <Button className="flex gap-2"><PlusIcon />Add New Lesson</Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogTitle>Add New Module</DialogTitle>
+                <DialogTitle>Add New Lesson</DialogTitle>
                 <Separator />
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 pt-4">
-
                         <FormField
                             control={form.control}
                             name="name"
@@ -277,10 +323,22 @@ function NewModuleDialog({ onRefresh, courseId }: { onRefresh: () => Promise<voi
                                             maxLength={500}
                                         />
                                         <div className="absolute bottom-2 right-4">
-                                            <span className="text-sm text-gray-500">{field.value.length}/200 characters</span>
+                                            <span className="text-sm text-gray-500">{field.value?.length}/200 characters</span>
                                         </div>
                                     </div>
                                     <p className="text-sm text-red-500">{fieldState.error?.message}</p>
+                                </div>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="duration"
+                            render={({ field, fieldState }) => (
+                                <div className="flex flex-col gap-2">
+                                    <Label htmlFor="duration">Duration in minutes</Label>
+                                    <Input value={field.value} onChange={(e) => field.onChange(Number(e.target.value))} id="duration" type="number" placeholder="Duration" />
+                                    <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
                                 </div>
                             )}
                         />
@@ -294,17 +352,16 @@ function NewModuleDialog({ onRefresh, courseId }: { onRefresh: () => Promise<voi
     )
 }
 
-export function TableModules({ courseId, courseName }: { courseId: string, courseName: string }) {
-    const modules = api.admin.getModules.useQuery({ courseId });
-    const router = useRouter()
+export function TableLessons({ moduleId, courseId, courseName, moduleName }: { moduleId: string, courseId: string, courseName: string, moduleName: string }) {
+    const lessons = api.admin.getLessons.useQuery({ moduleId });
 
-    const refreshModules = useCallback(async () => {
-        await modules.refetch()
-    }, [modules])
+    const refreshLessons = useCallback(async () => {
+        await lessons.refetch()
+    }, [lessons])
 
     const columns = useMemo(() => getColumns({
-        onRefresh: refreshModules
-    }), [refreshModules])
+        onRefresh: refreshLessons
+    }), [refreshLessons])
 
 
     return (
@@ -320,24 +377,28 @@ export function TableModules({ courseId, courseName }: { courseId: string, cours
                             <BreadcrumbLink href={`/admin/content/${courseId}`}>{courseName}</BreadcrumbLink>
                         </BreadcrumbItem>
                         <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                            <BreadcrumbLink href={`/admin/content/${courseId}/${moduleId}`}>{moduleName}</BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
                         <BreadcrumbItem className="text-black dark:text-primary-foreground">
-                            Modules
+                            Lessons
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-                <NewModuleDialog onRefresh={refreshModules} courseId={courseId} />
+                <NewLessonDialog onRefresh={refreshLessons} moduleId={moduleId} />
             </div>
             <DataTable
                 columns={columns}
-                data={modules.data?.data ?? []}
-                isPending={modules.isPending}
+                data={lessons.data?.data ?? []}
+                isPending={lessons.isPending}
                 searchBox={true}
                 defaultVisibility={{
                     id: false,
-                    courseId: false,
-                }}
-                onTableRowClick={(row) => {
-                    router.push(`/admin/content/${courseId}/${row.getValue<string>("id")}`)
+                    moduleId: false,
+                    content: false,
+                    videoUrl: false,
+                    presentationUrl: false,
                 }}
             />
         </>

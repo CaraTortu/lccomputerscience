@@ -12,7 +12,7 @@ export default async function AdminModulesPage({ params }: { params: Promise<{ c
 
     return (
         <div className="p-6">
-            <TableModules courseId={courseId} />
+            <TableModules courseId={course.id} courseName={course.name} />
         </div>
     )
 }

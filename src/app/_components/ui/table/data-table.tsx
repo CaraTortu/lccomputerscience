@@ -112,7 +112,7 @@ export function DataTable<TData, TValue>({
                     <DataTableViewOptions table={table} />
                 </div>
             </div>
-            <div className="rounded-md border w-full">
+            <div className="rounded-md border w-full z-0">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

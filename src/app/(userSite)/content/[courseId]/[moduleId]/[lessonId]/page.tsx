@@ -29,7 +29,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
         notFound();
     }
 
-    const content = await unified()
+    const content = lesson.content ? await unified()
         .use(remarkParse)
         .use(remarkRehype)
         .use(rehypeShiki, {
@@ -41,7 +41,8 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
         })
         .use(rehypeStringify)
         .process(lesson.content)
-        .then((file) => file.toString());
+        .then((file) => file.toString())
+        : "";
 
     return (
         <div className="flex-grow h-full container mx-auto py-8">

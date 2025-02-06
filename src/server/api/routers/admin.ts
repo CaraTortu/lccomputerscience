@@ -1,11 +1,13 @@
 import { z } from "zod";
 import { adminProcedure, createTRPCRouter } from "../trpc";
 import { eq } from "drizzle-orm";
-import { courses, modules, user } from "~/server/db/schema";
+import { courses, lessons, modules, user } from "~/server/db/schema";
 import {
     createCourseSchema,
+    createLessonSchema,
     createModuleSchema,
     updateCourseSchema,
+    updateLessonSchema,
     updateModuleSchema,
     updateUserSchema,
 } from "~/lib/schemas";
@@ -137,6 +139,74 @@ export const adminRouter = createTRPCRouter({
                     description: input.description,
                 })
                 .where(eq(modules.id, input.id))
+                .returning();
+
+            return { success: result.length > 0 };
+        }),
+
+    /**
+     * LESSON MANAGEMENT
+     */
+
+    getLessons: adminProcedure
+        .input(z.object({ moduleId: z.string().uuid() }))
+        .query(async ({ ctx, input }) => {
+            const dbModule = await ctx.db.query.modules.findFirst({
+                where: eq(modules.id, input.moduleId),
+                with: { lessons: true },
+            });
+
+            if (!dbModule) {
+                return { success: false, reason: "Module not found" };
+            }
+
+            return { success: true, data: dbModule.lessons };
+        }),
+
+    deleteLesson: adminProcedure
+        .input(z.object({ lessonId: z.string().uuid() }))
+        .mutation(async ({ ctx, input }) => {
+            const result = await ctx.db
+                .delete(lessons)
+                .where(eq(lessons.id, input.lessonId))
+                .returning({ id: lessons.id });
+
+            return { success: result.length > 0 };
+        }),
+
+    createLesson: adminProcedure
+        .input(createLessonSchema)
+        .mutation(async ({ ctx, input }) => {
+            const result = await ctx.db
+                .insert(lessons)
+                .values({
+                    name: input.name,
+                    description: input.description,
+                    duration: input.duration,
+                    content: input.content,
+                    videoUrl: input.videoUrl,
+                    presentationUrl: input.presentationUrl,
+                    moduleId: input.moduleId,
+                })
+                .returning();
+
+            return { success: result.length > 0 };
+        }),
+
+    updateLesson: adminProcedure
+        .input(updateLessonSchema)
+        .mutation(async ({ ctx, input }) => {
+            const result = await ctx.db
+                .update(lessons)
+                .set({
+                    name: input.name,
+                    description: input.description,
+                    duration: input.duration,
+                    content: input.content,
+                    videoUrl: input.videoUrl,
+                    presentationUrl: input.presentationUrl,
+                })
+                .where(eq(lessons.id, input.id))
                 .returning();
 
             return { success: result.length > 0 };

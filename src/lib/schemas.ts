@@ -131,3 +131,26 @@ export const updateUserSchema = z.object({
     tier: z.enum(["free", "bronze", "silver", "gold"]),
     role: z.enum(["user", "admin"]),
 });
+
+/**
+ * Schema for creating lessons
+ */
+export const createLessonSchema = z.object({
+    name: z.string().nonempty("Name is required"),
+    description: z
+        .string()
+        .max(200, "Description must be less than 200 characters")
+        .optional(),
+    duration: z.number().int().positive("Duration must be a positive number"),
+    content: z.string().optional(),
+    videoUrl: z.string().url("Video URL is invalid").optional(),
+    presentationUrl: z.string().url("Presentation URL is invalid").optional(),
+    moduleId: z.string().uuid("Invalid module ID"),
+});
+
+/**
+ * Schema for updating lessons
+ */
+export const updateLessonSchema = createLessonSchema.extend({
+    id: z.string().uuid("Invalid lesson ID"),
+});
