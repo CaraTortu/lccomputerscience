@@ -236,7 +236,7 @@ function ActionsCell({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pr
                     <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="flex flex-col gap-2 p-2">
+            <DropdownMenuContent align="end" className="flex flex-col gap-2 p-2" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <EditDialog row={row} onRefresh={onRefresh} />
                 <Button size="sm" variant="destructive" onClick={() => deleteLesson()}><Trash2Icon />Delete</Button>

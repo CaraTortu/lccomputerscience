@@ -142,9 +142,9 @@ export const createLessonSchema = z.object({
         .max(200, "Description must be less than 200 characters")
         .optional(),
     duration: z.number().int().positive("Duration must be a positive number"),
-    content: z.string().optional(),
-    videoUrl: z.string().url("Video URL is invalid").optional(),
-    presentationUrl: z.string().url("Presentation URL is invalid").optional(),
+    content: z.string().nullish(),
+    videoUrl: z.string().url("Video URL is invalid").nullish(),
+    presentationUrl: z.string().url("Presentation URL is invalid").nullish(),
     moduleId: z.string().uuid("Invalid module ID"),
 });
 
