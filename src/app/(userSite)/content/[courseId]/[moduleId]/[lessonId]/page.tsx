@@ -45,7 +45,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
         : "";
 
     return (
-        <div className="grow h-full container mx-auto py-8">
+        <div className="grow h-full container mx-auto py-8 px-8 md:px-4">
             <Link href={`/content/${courseId}/${moduleId}`} className="flex items-center text-blue-500 hover:underline mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Module
@@ -56,7 +56,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
                     <CardDescription>{lesson.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="mdPost font-sans" dangerouslySetInnerHTML={{ __html: content }}>
+                    <div className="mdPost font-sans overflow-x-scroll md:overflow-hidden" dangerouslySetInnerHTML={{ __html: content }}>
                     </div>
                 </CardContent>
             </Card>
