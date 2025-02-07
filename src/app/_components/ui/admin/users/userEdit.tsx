@@ -2,8 +2,8 @@
 import { type DBUser } from "~/server/db";
 import { Separator } from "../../separator";
 import { Button } from "../../button";
-import { GavelIcon, SaveIcon, ShieldOffIcon, Trash2Icon } from "lucide-react";
-import { type z } from "zod";
+import { CalendarIcon, GavelIcon, SaveIcon, ShieldOffIcon, Trash2Icon } from "lucide-react";
+import { z } from "zod";
 import { updateUserSchema } from "~/lib/schemas";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,8 +16,177 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../avatar";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "../../dialog";
+import { authClient } from "~/lib/auth-client";
+import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
+import { cn } from "~/lib/utils";
+import { format } from "date-fns"
+import { Calendar } from "../../calendar";
 
 type UpdateUserSchema = z.infer<typeof updateUserSchema>;
+
+function DeleteUser({ user }: { user: DBUser }) {
+    const [open, setOpen] = useState(false);
+    const { toast } = useToast();
+    const router = useRouter();
+
+    const deleteUser = async () => {
+        const result = await authClient.admin.removeUser({ userId: user.id });
+
+        if (result.error) {
+            toast({
+                title: "Error",
+                description: result.error.message ?? "An error occurred while deleting the user",
+                duration: 2000,
+                variant: "destructive",
+            });
+
+            return
+        }
+
+        toast({
+            title: "User deleted",
+            description: "User has been deleted",
+            duration: 2000,
+        });
+        router.push("/admin/users")
+    }
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className="flex gap-2" variant="destructive"><Trash2Icon /> Delete</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Delete user</DialogTitle>
+                <DialogDescription>Are you sure you want to delete this user? This action is irreversible.</DialogDescription>
+                <div className="flex gap-4 pt-4">
+                    <Button onClick={() => deleteUser()} variant="destructive">Delete</Button>
+                    <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+                </div>
+            </DialogContent>
+        </Dialog>
+    )
+}
+
+const banUserSchema = z.object({
+    userId: z.string(),
+    banReason: z.string().optional(),
+    banExpiresIn: z.date(),
+})
+
+type BanUserSchema = z.infer<typeof banUserSchema>;
+
+function BanUser({ user }: { user: DBUser }) {
+    const [open, setOpen] = useState(false);
+    const { toast } = useToast();
+    const router = useRouter();
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const form = useForm<BanUserSchema>({
+        resolver: zodResolver(banUserSchema),
+        defaultValues: {
+            userId: user.id,
+            banReason: "",
+            banExpiresIn: tomorrow,
+        },
+    })
+
+    const banUser = async (data: BanUserSchema) => {
+        const result = await authClient.admin.banUser({
+            userId: data.userId,
+            banReason: data.banReason,
+            banExpiresIn: data.banExpiresIn.getTime() / 1000 - new Date().getTime() / 1000,
+        });
+
+        if (result.error) {
+            toast({
+                title: "Error",
+                description: result.error.message ?? "An error occurred while banning the user",
+                duration: 2000,
+                variant: "destructive",
+            });
+
+            return
+        }
+
+        toast({
+            title: "User banned",
+            description: "User has been banned",
+            duration: 2000,
+        });
+        router.refresh()    
+    }
+
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button className="flex gap-2" variant="secondary"><GavelIcon /> Ban</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogTitle>Ban user</DialogTitle>
+                <DialogDescription></DialogDescription>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(banUser)} className="flex flex-col gap-4">
+                        <FormField
+                            control={form.control}
+                            name="banReason"
+                            render={({ field, fieldState }) => (
+                                <div className="flex flex-col gap-2">
+                                    <Label htmlFor="banReason">Reason</Label>
+                                    <Input {...field} id="banReason" placeholder="Reason for ban" />
+                                    <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
+                                </div>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="banExpiresIn"
+                            render={({ field, fieldState }) => (
+                                <div className="flex flex-col gap-2">
+                                    <Label htmlFor="banExpiresIn">Expires at</Label>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-[280px] justify-start text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                                {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-auto p-0">
+                                            <Calendar
+                                                mode="single"
+                                                selected={field.value}
+                                                onSelect={field.onChange}
+                                                disabled={(date) => date < new Date()}
+                                                initialFocus
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
+                                </div>
+                            )}
+                        />
+
+                        <div className="flex gap-4 pt-4">
+                            <Button variant="destructive" className="flex gap-2"><GavelIcon /> Ban</Button>
+                            <Button variant="outline" type="button" onClick={() => setOpen(false)}>Cancel</Button>
+                        </div>
+                    </form>
+                </Form>
+            </DialogContent>
+        </Dialog>
+    )
+}
 
 export function UserEdit({ user }: { user: DBUser }) {
     const [changed, setChanged] = useState(false);
@@ -32,7 +201,7 @@ export function UserEdit({ user }: { user: DBUser }) {
             name: user.name,
             email: user.email,
             emailVerified: user.emailVerified,
-            image: user.image ?? "",
+            image: user.image ?? null, 
             tier: user.tier,
             role: user.role as "user" | "admin",
         },
@@ -64,6 +233,28 @@ export function UserEdit({ user }: { user: DBUser }) {
         }
     }
 
+    const unbanUser = async () => {
+        const result = await authClient.admin.unbanUser({ userId: user.id });
+
+        if (result.error) {
+            toast({
+                title: "Error",
+                description: result.error.message ?? "An error occurred while unbanning the user",
+                duration: 2000,
+                variant: "destructive",
+            });
+
+            return
+        }
+
+        toast({
+            title: "User unbanned",
+            description: "User has been unbanned",
+            duration: 2000,
+        });
+        router.refresh()
+    }
+
     return (
         <div>
             <Form {...form}>
@@ -82,8 +273,8 @@ export function UserEdit({ user }: { user: DBUser }) {
                             </div>
                             <div className="flex gap-4">
                                 <Button disabled={!changed} type="submit" className="flex gap-2"><SaveIcon />Update user</Button>
-                                {user.banned ? <Button className="flex gap-2" variant="outline"><ShieldOffIcon /> Unban</Button> : <Button variant="outline" className="flex gap-2"> <GavelIcon /> Ban</Button>}
-                                <Button className="flex gap-2" variant="destructive"><Trash2Icon /> Delete</Button>
+                                {user.banned ? <Button className="flex gap-2" variant="outline" onClick={() => unbanUser()}><ShieldOffIcon /> Unban</Button> : <BanUser user={user} />}
+                                <DeleteUser user={user} />
                             </div>
                         </div>
                         <div className="px-16 pb-8">
@@ -128,7 +319,7 @@ export function UserEdit({ user }: { user: DBUser }) {
                                     render={({ field, fieldState }) => (
                                         <div className="flex flex-col gap-2">
                                             <Label htmlFor="image">Profile picture</Label>
-                                            <Input {...field} id="image" placeholder="https://example.com" />
+                                            <Input value={field.value ?? ""} onChange={field.onChange} id="image" placeholder="https://example.com" />
                                             <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
                                         </div>
                                     )}
@@ -224,8 +415,6 @@ export function UserEdit({ user }: { user: DBUser }) {
                                 )}
                             />
                         </div>
-                    </div>
-                    <div className="pt-10">
                     </div>
                 </form>
             </Form>

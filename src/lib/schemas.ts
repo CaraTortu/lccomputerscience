@@ -127,7 +127,7 @@ export const updateUserSchema = z.object({
     name: z.string().nonempty("Name is required"),
     email: z.string().email("Invalid email address"),
     emailVerified: z.boolean(),
-    image: z.string().url("Image URL is invalid").optional(),
+    image: z.string().url("Image URL is invalid").nullable(),
     tier: z.enum(["free", "bronze", "silver", "gold"]),
     role: z.enum(["user", "admin"]),
 });
@@ -143,8 +143,8 @@ export const createLessonSchema = z.object({
         .nullish(),
     duration: z.number().int().positive("Duration must be a positive number"),
     content: z.string().nullish(),
-    videoUrl: z.string().url("Video URL is invalid").nullish(),
-    presentationUrl: z.string().url("Presentation URL is invalid").nullish(),
+    videoUrl: z.string().url("Video URL is invalid").nullable(),
+    presentationUrl: z.string().url("Presentation URL is invalid").nullable(),
     moduleId: z.string().uuid("Invalid module ID"),
 });
 
