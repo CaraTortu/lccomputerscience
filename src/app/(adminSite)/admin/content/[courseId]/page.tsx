@@ -4,7 +4,7 @@ import { api } from "~/trpc/server";
 
 export default async function AdminModulesPage({ params }: { params: Promise<{ courseId: string }> }) {
     const courseId = (await params).courseId;
-    const course = await api.course.getCourse({ courseId });
+    const course = await api.admin.getCourse({ courseId });
 
     if (!course) {
         notFound();

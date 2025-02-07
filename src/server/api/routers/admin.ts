@@ -1,7 +1,13 @@
 import { z } from "zod";
 import { adminProcedure, createTRPCRouter } from "../trpc";
-import { eq } from "drizzle-orm";
-import { courses, lessons, modules, user } from "~/server/db/schema";
+import { and, eq } from "drizzle-orm";
+import {
+    courses,
+    lessons,
+    modules,
+    user,
+    userCourseEnrollments,
+} from "~/server/db/schema";
 import {
     createCourseSchema,
     createLessonSchema,
@@ -23,6 +29,49 @@ export const adminRouter = createTRPCRouter({
     /**
      * COURSE MANAGEMENT
      */
+    getCourse: adminProcedure
+        .input(
+            z.object({
+                courseId: z.string().uuid(),
+            }),
+        )
+        .query(async ({ input, ctx }) => {
+            const course = await ctx.db.query.courses.findFirst({
+                where: and(eq(courses.id, input.courseId)),
+                with: {
+                    modules: {
+                        with: {
+                            lessons: true,
+                        },
+                    },
+                },
+            });
+
+            if (!course) {
+                return null;
+            }
+
+            // Calculate course length
+            const courseLength = course.modules.reduce(
+                (acc, module) =>
+                    acc +
+                    module.lessons.reduce((accL, l) => accL + l.duration, 0),
+                0,
+            );
+
+            // Get number of students enrolled
+            const students = await ctx.db.query.userCourseEnrollments
+                .findMany({
+                    where: eq(userCourseEnrollments.courseId, course.id),
+                })
+                .then((enrollments) => enrollments.length);
+
+            return {
+                ...course,
+                courseLength,
+                students,
+            };
+        }),
     getCourses: adminProcedure.query(async ({ ctx }) => {
         return await ctx.db.query.courses
             .findMany({
