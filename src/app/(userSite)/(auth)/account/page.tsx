@@ -8,7 +8,10 @@ import { auth } from "~/server/auth";
 
 export default async function Account() {
     const { user } = (await auth.api.getSession({
-        headers: await headers()
+        headers: await headers(),
+        query: {
+            disableCookieCache: true
+        }
     }))!;
 
     return (
