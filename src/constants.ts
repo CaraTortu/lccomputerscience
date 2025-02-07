@@ -9,12 +9,14 @@ export type NavbarLinkType = {
     url: string;
     hideIfLoggedIn?: boolean;
     adminOnly?: boolean;
+    prefetch?: boolean;
 };
 
 export const navbarLinks: NavbarLinkType[] = [
     {
         name: "Home",
         url: "/",
+        prefetch: false,
     },
     {
         name: "Content",
@@ -23,21 +25,25 @@ export const navbarLinks: NavbarLinkType[] = [
     {
         name: "Contact us",
         url: "/contact",
+        prefetch: false,
         hideIfLoggedIn: true,
     },
     {
         name: "Pricing",
         url: "/pricing",
+        prefetch: false,
         hideIfLoggedIn: true,
     },
     {
         name: "Sign In",
         url: "/login",
+        prefetch: false,
         hideIfLoggedIn: true,
     },
     {
         name: "Admin",
         url: "/admin/content",
+        prefetch: false,
         adminOnly: true,
     },
 ];

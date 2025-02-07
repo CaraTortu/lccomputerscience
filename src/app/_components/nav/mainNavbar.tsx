@@ -26,13 +26,13 @@ export default async function NavBar() {
                 </Link>
                 <div className="grow w-full flex items-center font-bold text-sidebar-foreground *:duration-100 gap-12">
                     {navbarLinks.filter(link => !link.hideIfLoggedIn && !link.adminOnly).map((link) => (
-                        <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600">{link.name}</Link>
+                        <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600" prefetch={link.prefetch}>{link.name}</Link>
                     ))}
                     {!session && navbarLinks.filter(link => link.hideIfLoggedIn).map((link) => (
-                        <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600">{link.name}</Link>
+                        <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600" prefetch={link.prefetch}>{link.name}</Link>
                     ))}
                     {session?.user.role === "admin" && navbarLinks.filter(link => link.adminOnly).map((link) => (
-                        <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600">{link.name}</Link>
+                        <Link key={link.url} href={link.url} className="dark:hover:text-gray-300 hover:text-gray-600" prefetch={link.prefetch}>{link.name}</Link>
                     ))}
                 </div>
                 <div className="flex gap-4">
