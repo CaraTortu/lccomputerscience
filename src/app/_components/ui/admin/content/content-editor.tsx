@@ -39,6 +39,10 @@ export function ContentEditor({ lesson, courseId, courseName, moduleId, moduleNa
         }
     })
 
+    form.watch(() => {
+        console.log(form.formState.errors)
+    })
+
     const onSubmit = async (data: EditContentSchema) => {
         const result = await updateLessonMutation.mutateAsync(data)
 

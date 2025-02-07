@@ -261,8 +261,8 @@ function NewLessonDialog({ onRefresh, moduleId }: { onRefresh: () => Promise<voi
             description: "",
             duration: 10,
             content: "",
-            videoUrl: "",
-            presentationUrl: "",
+            videoUrl: null,
+            presentationUrl: null,
             moduleId,
         }
     })
