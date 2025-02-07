@@ -15,16 +15,16 @@ export default function Footer() {
                     <Link href="/grinds">Interested in Grinds</Link>
                 </div>
                 <div className="flex gap-4">
-                    <Link href="https://x.com/LCComputerSci">
+                    <Link href="https://x.com/LCComputerSci" prefetch={false}>
                         <Image className='dark:invert' src="/assets/svg/twitter.svg" width="32" height="32" alt="X logo" />
                     </Link>
-                    <Link className='dark:invert' href="https://www.instagram.com/lccomputerscience/">
+                    <Link className='dark:invert' href="https://www.instagram.com/lccomputerscience/" prefetch={false}>
                         <Image src="/assets/svg/instagram.svg" width="32" height="32" alt="Instagram logo" />
                     </Link>
-                    <Link className='dark:invert' href="https://www.facebook.com/LCComputerScience/">
+                    <Link className='dark:invert' href="https://www.facebook.com/LCComputerScience/" prefetch={false}>
                         <Image src="/assets/svg/facebook.svg" width="32" height="32" alt="Facebook logo" />
                     </Link>
-                    <Link className='dark:invert' href="https://www.tiktok.com/@lccomputerscience">
+                    <Link className='dark:invert' href="https://www.tiktok.com/@lccomputerscience" prefetch={false}>
                         <Image src="/assets/svg/tiktok.svg" width="32" height="32" alt="TikTok logo" />
                     </Link>
                 </div>

@@ -83,7 +83,10 @@ function renderValue(value: boolean | string) {
 
 export default async function PricingPage() {
     const session = await auth.api.getSession({
-        headers: await headers()
+        headers: await headers(),
+        query: {
+            disableCookieCache: true
+        }
     })
 
     // Get latest prices. If a price is not defined, we will use a default value

@@ -8,7 +8,7 @@ import { courses } from "~/server/db/schema"
 
 type ContentType = InferSelectModel<typeof courses>
 
-function ContentCell(course: ContentType) {
+async function ContentCell(course: ContentType) {
     return (
         <Card>
             {course.status !== "disabled" ? (

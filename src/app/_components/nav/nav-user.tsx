@@ -110,7 +110,7 @@ export function NavUser({
                     <>
                         <DropdownMenuSeparator />
                         < DropdownMenuGroup >
-                            <Link href="/pricing">
+                            <Link href="/pricing"prefetch={false}>
                                 <DropdownMenuItem>
                                     <Sparkles />
                                     Upgrade Account
