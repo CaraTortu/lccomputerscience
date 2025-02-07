@@ -6,7 +6,7 @@ export default function UserLayout({ children }: Readonly<{ children: ReactNode 
     return (
         <>
             <NavBar />
-            <div className="h-svh w-full flex flex-col pt-16">
+            <div className="min-h-svh w-full flex flex-col pt-16">
                 {children}
                 <Footer />
             </div>
