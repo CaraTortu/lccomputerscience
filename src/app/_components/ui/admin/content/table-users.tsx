@@ -14,6 +14,7 @@ type Column = {
     emailVerified: boolean;
     tier: string;
     role: string;
+    banned: boolean | null;
     createdAt: Date;
 }
 
@@ -53,6 +54,13 @@ const getColumns: () => ColumnDef<Column>[] = () => [
         cell: ({ getValue }) => getValue<string>().charAt(0).toUpperCase() + getValue<string>().slice(1),
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Role" />
+        ),
+    },
+    {
+        accessorKey: "banned",
+        cell: ({ getValue }) => getValue<boolean>() ? "Yes" : "No",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Banned" />
         ),
     },
     {

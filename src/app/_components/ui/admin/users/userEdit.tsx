@@ -282,6 +282,7 @@ export function UserEdit({ user }: { user: DBUser }) {
                             <li><span className="font-bold">Last login:</span> {user.lastLoginAt ? user.lastLoginAt.toUTCString() : "User has never logged in"}</li>
                             <li><span className="font-bold">Email verified:</span> {user.emailVerified ? <span className="text-green-400">Yes</span> : <span className="text-red-400">No</span>}</li>
                             <li><span className="font-bold">Tier:</span> {user.tier}</li>
+                            <li><span className="font-bold">Banned:</span> {user.banned ? <span className="text-green-400">Yes, until {user.banExpires?.toDateString()} because &quot;{user.banReason}&quot;</span>: <span className="text-red-400">No</span>}</li>
                         </div>
                     </div>
                     <Separator />
