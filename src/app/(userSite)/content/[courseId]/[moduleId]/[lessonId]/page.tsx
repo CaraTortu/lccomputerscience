@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/app/_components/ui/card";
 import { db } from "~/server/db";
 import { lessons } from "~/server/db/schema";
 import { unified } from "unified"
@@ -11,6 +10,7 @@ import remarkRehype from "remark-rehype"
 import rehypeShiki from "rehype-pretty-code"
 import rehypeStringify from "rehype-stringify"
 import { transformerCopyButton } from "@rehype-pretty/transformers"
+import ContentView from "~/app/_components/ui/content/content-view";
 
 export default async function ModulePage({ params }: { params: Promise<{ courseId: string, moduleId: string, lessonId: string }> }) {
     const courseId = (await params).courseId;
@@ -45,21 +45,15 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
         : "";
 
     return (
-        <div className="grow h-full container mx-auto py-8 px-8 md:px-4">
+        <div className="grow h-full container mx-auto py-8 px-8 md:px-4 flex flex-col">
             <Link href={`/content/${courseId}/${moduleId}`} className="flex items-center text-blue-500 hover:underline mb-4">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Module
             </Link>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-2xl font-bold">{lesson.name}</CardTitle>
-                    <CardDescription>{lesson.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="mdPost font-sans overflow-x-scroll md:overflow-hidden" dangerouslySetInnerHTML={{ __html: content }}>
-                    </div>
-                </CardContent>
-            </Card>
+            <ContentView lesson={lesson}>
+                <div className="mdPost font-sans overflow-x-scroll md:overflow-hidden" dangerouslySetInnerHTML={{ __html: content }}>
+                </div>
+            </ContentView>
         </div>
     )
 }

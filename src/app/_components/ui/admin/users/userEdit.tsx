@@ -2,7 +2,7 @@
 import { type DBUser } from "~/server/db";
 import { Separator } from "../../separator";
 import { Button } from "../../button";
-import { SaveIcon } from "lucide-react";
+import { GavelIcon, SaveIcon, ShieldOffIcon, Trash2Icon } from "lucide-react";
 import { type z } from "zod";
 import { updateUserSchema } from "~/lib/schemas";
 import { useForm } from "react-hook-form";
@@ -82,8 +82,8 @@ export function UserEdit({ user }: { user: DBUser }) {
                             </div>
                             <div className="flex gap-4">
                                 <Button disabled={!changed} type="submit" className="flex gap-2"><SaveIcon />Update user</Button>
-                                {/*{user.banned ? <Button className="flex gap-2" variant="outline"><ShieldOffIcon /> Unban</Button> : <Button variant="outline" className="flex gap-2"> <GavelIcon /> Ban</Button>}
-                                <Button className="flex gap-2" variant="destructive"><Trash2Icon /> Delete</Button>*/}
+                                {user.banned ? <Button className="flex gap-2" variant="outline"><ShieldOffIcon /> Unban</Button> : <Button variant="outline" className="flex gap-2"> <GavelIcon /> Ban</Button>}
+                                <Button className="flex gap-2" variant="destructive"><Trash2Icon /> Delete</Button>
                             </div>
                         </div>
                         <div className="px-16 pb-8">
