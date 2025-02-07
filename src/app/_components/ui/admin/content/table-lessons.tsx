@@ -111,11 +111,11 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
             id: row.getValue<string>("id"),
             moduleId: row.getValue<string>("moduleId"),
             name: row.getValue<string>("name"),
-            description: row.getValue<string | undefined>("description"),
+            description: row.getValue<string | null>("description"),
             duration: row.getValue<number>("duration"),
-            content: row.getValue<string | undefined>("content"),
-            videoUrl: row.getValue<string | undefined>("videoUrl"),
-            presentationUrl: row.getValue<string | undefined>("presentationUrl"),
+            content: row.getValue<string | null>("content"),
+            videoUrl: row.getValue<string | null>("videoUrl"),
+            presentationUrl: row.getValue<string | null>("presentationUrl"),
         }
     })
 
@@ -170,7 +170,8 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
                                     <Label htmlFor="message">Description</Label>
                                     <div className="relative">
                                         <Textarea
-                                            {...field}
+                                            value={field.value ?? ""}
+                                            onChange={field.onChange}
                                             placeholder="Your description here"
                                             className="min-h-32"
                                             maxLength={500}

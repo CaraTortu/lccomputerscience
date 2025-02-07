@@ -1,9 +1,9 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "~/server/db";
-import { lessons } from "~/server/db/schema";
+import { lessons, userLessonsComplete } from "~/server/db/schema";
 import { unified } from "unified"
 import remarkParse from "remark-parse"
 import remarkRehype from "remark-rehype"
@@ -11,6 +11,8 @@ import rehypeShiki from "rehype-pretty-code"
 import rehypeStringify from "rehype-stringify"
 import { transformerCopyButton } from "@rehype-pretty/transformers"
 import ContentView from "~/app/_components/ui/content/content-view";
+import { auth } from "~/server/auth";
+import { headers } from "next/headers";
 
 export default async function ModulePage({ params }: { params: Promise<{ courseId: string, moduleId: string, lessonId: string }> }) {
     const courseId = (await params).courseId;
@@ -27,6 +29,23 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
 
     if (!lesson || lesson.moduleId !== moduleId || lesson.module.courseId !== courseId) {
         notFound();
+    }
+
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    if (session) {
+        const lessonCompleted = await db.query.userLessonsComplete.findFirst({
+            where: and(eq(userLessonsComplete.lessonId, lessonId), eq(userLessonsComplete.userId, session.user.id))
+        })
+
+        if (!lessonCompleted) {
+            await db.insert(userLessonsComplete).values({
+                lessonId: lessonId,
+                userId: session.user.id
+            }).execute()
+        }
     }
 
     const content = lesson.content ? await unified()
