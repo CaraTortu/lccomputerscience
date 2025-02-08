@@ -86,7 +86,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
                 Back to Module
             </Link>
             <ContentView lesson={lesson}>
-                <div className="mdPost font-sans overflow-x-scroll md:overflow-hidden" dangerouslySetInnerHTML={{ __html: content }}>
+                <div className="mdPost font-sans overflow-auto" dangerouslySetInnerHTML={{ __html: content }}>
                 </div>
             </ContentView>
         </div>
