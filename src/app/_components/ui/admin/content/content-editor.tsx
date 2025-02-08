@@ -108,7 +108,9 @@ export function ContentEditor({ lesson, courseId, courseName, moduleId, moduleNa
                             render={({ field, fieldState }) => (
                                 <div className="flex flex-col gap-2">
                                     <Label htmlFor="videoUrl">Video URL</Label>
-                                    <Input {...field} value={field.value ?? ""} id="videoUrl" placeholder="https://example.com" />
+                                    <Input onChange={(e) => {
+                                        field.onChange(e.target.value === "" ? null : e.target.value)
+                                    }} value={field.value ?? ""} id="videoUrl" placeholder="https://example.com" />
                                     <p className="text-sm text-red-500">{fieldState.error?.message}</p>
                                 </div>
                             )}
@@ -120,7 +122,9 @@ export function ContentEditor({ lesson, courseId, courseName, moduleId, moduleNa
                             render={({ field, fieldState }) => (
                                 <div className="flex flex-col gap-2">
                                     <Label htmlFor="presentationURL">Presentation URL</Label>
-                                    <Input {...field} value={field.value ?? ""} id="presentationURL" placeholder="https://example.com" />
+                                    <Input onChange={(e) => {
+                                        field.onChange(e.target.value === "" ? null : e.target.value)
+                                    }} value={field.value ?? ""} id="presentationURL" placeholder="https://example.com" />
                                     <p className="text-sm text-red-500">{fieldState.error?.message}</p>
                                 </div>
                             )}

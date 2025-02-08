@@ -6,8 +6,16 @@ import { db } from "~/server/db";
 import { lessons, userLessonsComplete } from "~/server/db/schema";
 import { unified } from "unified"
 import remarkParse from "remark-parse"
+import remarkGfm from 'remark-gfm'
+import remarkDirective from 'remark-directive'
+import remarkFrontmatter from 'remark-frontmatter'
+import remarkMath from 'remark-math'
+import rehypeFormat from 'rehype-format'
+import rehypeSanitize from 'rehype-sanitize'
 import remarkRehype from "remark-rehype"
 import rehypeShiki from "rehype-pretty-code"
+import rehypeRaw from 'rehype-raw'
+import rehypeMathjax from 'rehype-mathjax'
 import rehypeStringify from "rehype-stringify"
 import { transformerCopyButton } from "@rehype-pretty/transformers"
 import ContentView from "~/app/_components/ui/content/content-view";
@@ -50,7 +58,15 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
 
     const content = lesson.content ? await unified()
         .use(remarkParse)
-        .use(remarkRehype)
+        .use(remarkDirective)
+        .use(remarkFrontmatter)
+        .use(remarkGfm)
+        .use(remarkMath)
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw)
+        .use(rehypeFormat)
+        .use(rehypeSanitize)
+        .use(rehypeMathjax)
         .use(rehypeShiki, {
             theme: "catppuccin-macchiato",
             transformers: [transformerCopyButton({
@@ -70,7 +86,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
                 Back to Module
             </Link>
             <ContentView lesson={lesson}>
-                <div className="mdPost font-sans overflow-x-scroll md:overflow-hidden" dangerouslySetInnerHTML={{ __html: content }}>
+                <div className="mdPost font-sans overflow-auto" dangerouslySetInnerHTML={{ __html: content }}>
                 </div>
             </ContentView>
         </div>

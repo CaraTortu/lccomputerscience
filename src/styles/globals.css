@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lexend:wght@100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap') layer(base);
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Lexend:wght@100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
 @import 'tailwindcss';
 @plugin 'tailwindcss-animate';
@@ -12,6 +12,7 @@
         'Times New Roman', Times, serif;
     --font-lexend: Lexend, ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: Fira Code, serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -153,48 +154,76 @@
         @apply bg-background text-foreground;
     }
 
+    :not([data-sidebar]):not(nav)>ul {
+        @apply list-disc pl-8;
+    }
+
+    :not([data-sidebar]):not(nav)>ol {
+        @apply list-decimal pl-8;
+    }
+
     .mdPost {
         @apply flex flex-col h-full grow p-4 gap-4;
     }
 
-    .mdPost>h1 {
+    .mdPost h1,
+    .mdPost h2,
+    .mdPost h3,
+    .mdPost h4,
+    .mdPost h5,
+    .mdPost h6 {
+        @apply pt-4 pb-2;
+    }
+
+    .mdPost h1 {
         @apply text-3xl font-bold;
     }
 
-    .mdPost>h2 {
+    .mdPost h2 {
         @apply text-2xl font-bold;
     }
 
-    .mdPost>h3 {
+    .mdPost h3 {
         @apply text-xl font-bold;
     }
 
-    .mdPost>h4 {
+    .mdPost h4 {
         @apply text-lg font-bold;
     }
 
-    .mdPost>p {
-        @apply text-lg;
-    }
-
-    .mdPost>p>strong {
+    .mdPost strong {
         @apply font-bold;
     }
 
-    .mdPost>p>em {
+    .mdPost em {
         @apply italic;
     }
 
-    .mdPost>p>a {
+    .mdPost a {
         @apply text-primary underline hover:text-primary/70;
     }
 
-    figure>pre {
-        @apply p-4 pr-12 size-fit rounded-lg;
+    .mdPost li,
+    .mdPost p {
+        @apply text-base;
     }
 
-    code {
+    .mdPost pre {
+        @apply p-4 pr-12 rounded-lg overflow-auto my-4;
+    }
+
+    .mdPost :not(pre)>code {
+        background-color: rgb(36, 39, 58);
+        @apply text-primary-foreground px-2 py-1 rounded-lg;
+    }
+
+    .mdPost pre>code {
         counter-reset: line;
+        @apply text-sm font-mono;
+    }
+
+    .mdPost summary {
+        @apply pb-3;
     }
 
     code>[data-line]::before {
