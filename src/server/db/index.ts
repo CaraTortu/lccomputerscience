@@ -13,7 +13,7 @@ const globalForDb = globalThis as unknown as {
     conn: NeonQueryFunction<false, false> | undefined;
 };
 
-const conn = globalForDb.conn ?? neon(env.DATABASE_URL);
+const conn = globalForDb.conn ?? neon(env.NEON_DATABASE_URL);
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
 export const db = drizzle(conn, { schema });
