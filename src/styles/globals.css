@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lexend:wght@100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap') layer(base);
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Lexend:wght@100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 
 @import 'tailwindcss';
 @plugin 'tailwindcss-animate';
@@ -12,6 +12,7 @@
         'Times New Roman', Times, serif;
     --font-lexend: Lexend, ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: Fira Code, serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -165,6 +166,15 @@
         @apply flex flex-col h-full grow p-4 gap-4;
     }
 
+    .mdPost h1,
+    .mdPost h2,
+    .mdPost h3,
+    .mdPost h4,
+    .mdPost h5,
+    .mdPost h6 {
+        @apply pt-4 pb-2;
+    }
+
     .mdPost h1 {
         @apply text-3xl font-bold;
     }
@@ -199,7 +209,7 @@
     }
 
     .mdPost pre {
-        @apply p-4 pr-12 rounded-lg overflow-auto;
+        @apply p-4 pr-12 rounded-lg overflow-auto my-4;
     }
 
     .mdPost :not(pre)>code {
@@ -209,7 +219,11 @@
 
     .mdPost pre>code {
         counter-reset: line;
-        @apply text-base;
+        @apply text-sm font-mono;
+    }
+
+    .mdPost summary {
+        @apply pb-3;
     }
 
     code>[data-line]::before {
