@@ -53,7 +53,7 @@ export const env = createEnv({
         BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
         AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
         AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
-        NEON_DATABASE_URL: process.env.DATABASE_URL,
+        NEON_DATABASE_URL: process.env.NEON_DATABASE_URL,
         EMAIL_SERVER: process.env.EMAIL_SERVER,
         EMAIL_PORT: process.env.EMAIL_PORT,
         EMAIL_USERNAME: process.env.EMAIL_USERNAME,
