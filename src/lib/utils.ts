@@ -39,3 +39,9 @@ export function calculateTrialEndUnixTimestamp(
     ); // Add trial days
     return Math.floor(trialEnd.getTime() / 1000); // Convert to Unix timestamp in seconds
 }
+
+export function getBaseUrl() {
+    if (typeof window !== "undefined") return window.location.origin;
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+    return `http://localhost:${process.env.PORT ?? 3000}`;
+}

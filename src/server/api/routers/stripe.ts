@@ -4,7 +4,7 @@ import { productTier, stripePrices, stripeProducts } from "~/server/db/schema";
 import { getOrCreateCustomer } from "~/server/stripe/handlers";
 import type Stripe from "stripe";
 import { eq } from "drizzle-orm";
-import { calculateTrialEndUnixTimestamp } from "~/lib/utils";
+import { calculateTrialEndUnixTimestamp, getBaseUrl } from "~/lib/utils";
 import { env } from "~/env";
 
 export const stripeRouter = createTRPCRouter({
@@ -65,8 +65,8 @@ export const stripeRouter = createTRPCRouter({
                         quantity: 1,
                     },
                 ],
-                cancel_url: `${env.NEXT_PUBLIC_URL}/pricing`,
-                success_url: `${env.NEXT_PUBLIC_URL}/pricing`,
+                cancel_url: `${getBaseUrl()}/pricing`,
+                success_url: `${getBaseUrl()}/pricing`,
             };
 
             // Check for one off or recurring payment
