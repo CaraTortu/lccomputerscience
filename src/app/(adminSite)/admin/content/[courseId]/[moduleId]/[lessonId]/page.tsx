@@ -7,7 +7,7 @@ export default async function AdminModulesPage({ params }: { params: Promise<{ c
     const moduleId = (await params).moduleId;
     const lessonId = (await params).lessonId;
 
-    const course = await api.course.getCourse({ courseId });
+    const course = await api.admin.getCourse({ courseId });
     const cModule = course?.modules.find((m) => m.id === moduleId);
     const lesson = cModule?.lessons.find((l) => l.id === lessonId);
 
