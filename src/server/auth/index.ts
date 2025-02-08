@@ -9,11 +9,13 @@ import * as bcrypt from "bcrypt-ts";
 import { checkHash } from "./utils";
 import { user } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { getBaseUrl } from "~/lib/utils";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
     }),
+    baseURL: getBaseUrl(),
     advanced: {
         generateId: false,
     },

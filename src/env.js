@@ -42,7 +42,6 @@ export const env = createEnv({
      * `NEXT_PUBLIC_`.
      */
     client: {
-        NEXT_PUBLIC_URL: z.string().url(),
         NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string(),
     },
 
@@ -51,7 +50,6 @@ export const env = createEnv({
      * middlewares) or client-side so we need to destruct manually.
      */
     runtimeEnv: {
-        NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
         BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
         AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
         AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
