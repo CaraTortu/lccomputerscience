@@ -46,30 +46,38 @@ export default async function Content() {
                     ))}
                 </div>
 
-                <Separator className="bg-primary" />
 
-                <div className="w-full items-center flex flex-col">
-                    <h1 className="text-2xl font-bold">Archive</h1>
-                    <h3>Topics archived</h3>
+                {content.filter(c => c.status === "archived").length > 0 && (
+                    <>
+                        <Separator className="bg-primary" />
+                        <div className="w-full items-center flex flex-col">
+                            <h1 className="text-2xl font-bold">Archive</h1>
+                            <h3>Topics archived</h3>
 
-                    <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-4 p-8 md:p-4">
-                        {content.filter(c => c.status === "archived").map((c) => (
-                            <ContentCell key={c.id} {...c} />
-                        ))}
-                    </div>
-                </div>
+                            <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-4 p-8 md:p-4">
+                                {content.filter(c => c.status === "archived").map((c) => (
+                                    <ContentCell key={c.id} {...c} />
+                                ))}
+                            </div>
+                        </div>
 
-                <Separator className="bg-primary" />
+                    </>
+                )}
 
-                <div className="w-full items-center flex flex-col">
-                    <h1 className="text-2xl font-bold">Coming soon...</h1>
+                {content.filter(c => c.status === "disabled").length > 0 && (
+                    <>
+                        <Separator className="bg-primary" />
+                        <div className="w-full items-center flex flex-col">
+                            <h1 className="text-2xl font-bold">Coming soon...</h1>
 
-                    <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-4 p-8 md:p-4">
-                        {content.filter(c => c.status === "disabled").map((c) => (
-                            <ContentCell key={c.id} {...c} />
-                        ))}
-                    </div>
-                </div>
+                            <div className="w-full grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mt-4 p-8 md:p-4">
+                                {content.filter(c => c.status === "disabled").map((c) => (
+                                    <ContentCell key={c.id} {...c} />
+                                ))}
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     )
