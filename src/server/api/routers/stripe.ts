@@ -5,7 +5,6 @@ import { getOrCreateCustomer } from "~/server/stripe/handlers";
 import type Stripe from "stripe";
 import { eq } from "drizzle-orm";
 import { calculateTrialEndUnixTimestamp, getBaseUrl } from "~/lib/utils";
-import { env } from "~/env";
 
 export const stripeRouter = createTRPCRouter({
     createCheckoutSession: protectedProcedure
