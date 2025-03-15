@@ -2,8 +2,19 @@ import { type ReactNode } from "react";
 import AdminNavbar from "~/app/_components/nav/admin/adminNavbar";
 import NavBar from "../_components/nav/mainNavbar";
 import { SidebarProvider, SidebarTrigger } from "../_components/ui/sidebar";
+import { auth } from "~/server/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    if (session?.user.role !== "admin") {
+        return redirect("/content")
+    }
+
     return (
         <div>
             <NavBar />
