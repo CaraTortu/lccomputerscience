@@ -18,6 +18,7 @@ export const auth = betterAuth({
     baseURL: getBaseUrl(),
     advanced: {
         generateId: false,
+        useSecureCookies: true,
     },
     account: {
         accountLinking: {
