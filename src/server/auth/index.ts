@@ -18,7 +18,6 @@ export const auth = betterAuth({
     baseURL: getBaseUrl(),
     advanced: {
         generateId: false,
-        useSecureCookies: true,
     },
     account: {
         accountLinking: {
@@ -90,7 +89,7 @@ export const auth = betterAuth({
         },
     },
 
-    plugins: [nextCookies(), admin()],
+    plugins: [admin(), nextCookies()],
 });
 
 // Export types
