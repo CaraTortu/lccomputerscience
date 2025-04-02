@@ -7,11 +7,7 @@ export default async function authMiddleware(request: NextRequest) {
     // If path is just /content, continue
     if (path === "/content") return NextResponse.next();
 
-    const session = getSessionCookie(request, {
-        cookieName: "session_token",
-        cookiePrefix: "better-auth",
-        useSecureCookies: true,
-    });
+    const session = getSessionCookie(request);
 
     if (!session) {
         return NextResponse.redirect(new URL("/login", request.url));
