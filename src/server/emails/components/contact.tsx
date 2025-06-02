@@ -20,7 +20,7 @@ export default function ContactEmail({ user, message }: ContactEmailProps) {
                 <li><span className="font-bold">Message:</span> {message}</li>
             </ul>
 
-            <Button href={`mailto:${user.email}?subject=Re: LCComputerScience.com query`} className="bg-blue-500 text-white px-6 py-3 rounded-lg">Reply</Button>
+            <Button href={`mailto:${user.email}?subject=Re: LCComputerScience query`} className="bg-blue-500 text-white px-6 py-3 rounded-lg">Reply</Button>
         </BaseEmail>
     )
 }

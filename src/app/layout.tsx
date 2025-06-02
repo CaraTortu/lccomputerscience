@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { ThemeProvider } from "./_components/theme/theme-provider";
 import { Toaster } from "./_components/ui/sonner";
+import { webConfig } from "~/lib/toggles";
 
 export const metadata: Metadata = {
     title: "LC Computer Science",
@@ -20,13 +21,14 @@ export default function RootLayout({
                 <TRPCReactProvider>
                     <ThemeProvider
                         attribute="class"
-                        defaultTheme="system"
+                        defaultTheme={webConfig.multiTheme ? "system" : "dark"}
                         enableSystem
                         disableTransitionOnChange
                     >
                         {children}
                         <Toaster />
                     </ThemeProvider>
+
                 </TRPCReactProvider>
             </body>
         </html>

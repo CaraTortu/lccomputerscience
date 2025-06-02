@@ -3,7 +3,6 @@
 import { MenuIcon } from "lucide-react"
 import { Button } from "../ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "../ui/sheet"
-import Image from "next/image"
 import { ThemeToggle } from "../theme/theme-toggle"
 import { adminLinks, navbarLinks } from "~/constants"
 import Link from "next/link"
@@ -32,6 +31,7 @@ import { useState } from "react"
 import { type Session, type User } from "~/server/auth"
 import { authClient } from "~/lib/auth-client"
 import { toast } from "sonner"
+import { webConfig } from "~/lib/toggles"
 
 function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: boolean) => void }) {
 
@@ -127,9 +127,17 @@ export default function MobileNav({ session }: { session: Session | null }) {
                     <MenuIcon />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col bg-sidebar text-sidebar-foreground">
+            <SheetContent side="left" className="flex flex-col bg-sidebar text-sidebar-foreground p-4 pt-8">
                 <SheetTitle className="flex w-full justify-center">
-                    <Image src="/images/toplogo.png" alt="LC Computer Science" width={250} height={100} />
+                    <div className="flex items-center gap-2">
+                        <div className="relative size-8 bg-purple-700 rounded-md text-white font-bold text-lg flex items-center justify-center shadow-lg">
+                            <span className="animate-pulse">L</span>
+                            <span className="absolute top-1 left-5 text-xs text-purple-300 animate-bounce">C</span>
+                        </div>
+                        <div className="text-white font-extrabold text-2xl tracking-tight">
+                            <span className="text-purple-400">Computer</span><span className="text-purple-200">Science</span>
+                        </div>
+                    </div>
                 </SheetTitle>
                 <SheetDescription></SheetDescription>
                 <div className="flex flex-col grow gap-4">
@@ -154,7 +162,7 @@ export default function MobileNav({ session }: { session: Session | null }) {
 
                     <div className="flex justify-end items-center gap-4 h-12">
                         {session && <MobileUserNav user={session.user} setNavOpen={(open) => setNavOpen(open)} />}
-                        <ThemeToggle className="h-12 w-12" />
+                        {webConfig.multiTheme && <ThemeToggle className="h-12 w-12" />}
                     </div>
                 </div>
             </SheetContent>

@@ -25,7 +25,7 @@ export const sendPasswordResetEmail = async (
     const htmlContent = await render(<PasswordResetEmail user={user} resetLink={resetLink} />);
 
     await transporter.sendMail({
-        from: `"LCComputerScience.com" <${env.EMAIL_USERNAME}>`,
+        from: `"LCComputerScience" <${env.EMAIL_USERNAME}>`,
         to: user.email,
         subject: "Password Reset request",
         html: htmlContent,
@@ -41,9 +41,9 @@ export const sendVerificationEmail = async (
     const htmlContent = await render(<EmailVerificationEmail user={user} verifyLink={verifyLink} contactEmail={env.CONTACT_EMAIL} />);
 
     await transporter.sendMail({
-        from: `"LCComputerScience.com" <${env.EMAIL_USERNAME}>`,
+        from: `"LCComputerScience" <${env.EMAIL_USERNAME}>`,
         to: user.email,
-        subject: "Verify your LCComputerScience.com account",
+        subject: "Verify your LCComputerScience account",
         html: htmlContent,
     });
 
@@ -58,9 +58,9 @@ export const sendContactEmail = async (
     const htmlContent = await render(<ContactEmail user={{ name, email }} message={message} />);
 
     await transporter.sendMail({
-        from: `"LCComputerScience.com" <${env.EMAIL_USERNAME}>`,
+        from: `"LCComputerScience" <${env.EMAIL_USERNAME}>`,
         to: env.CONTACT_EMAIL,
-        subject: "LCComputerScience.com Message",
+        subject: "LCComputerScience Message",
         html: htmlContent,
     });
 
