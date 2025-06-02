@@ -19,13 +19,7 @@ export const createTable = pgTableCreator(
     (name) => `lccomputerscience_${name}`,
 );
 
-export const userTierEnum = pgEnum("user_tier", [
-    "free",
-    "pro",
-    "bronze",
-    "silver",
-    "gold",
-]);
+export const userTierEnum = pgEnum("user_tier", ["free", "pro"]);
 export const userTypeEnum = pgEnum("user_type", ["user", "admin"]);
 
 export const user = createTable("user", {

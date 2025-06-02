@@ -15,7 +15,13 @@
       "when": 1748896472966,
       "tag": "0001_luxuriant_stellaris",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748897108203,
+      "tag": "0002_majestic_randall",
+      "breakpoints": true
     }
   ]
 }
-
