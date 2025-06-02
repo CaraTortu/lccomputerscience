@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { PulseLoader } from "react-spinners"
+import { toast } from "sonner"
 import { type z } from "zod"
 import { Button } from "~/app/_components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/app/_components/ui/card"
@@ -12,7 +13,6 @@ import { Form, FormField } from "~/app/_components/ui/form"
 import { Input } from "~/app/_components/ui/input"
 import { Label } from "~/app/_components/ui/label"
 import { Textarea } from "~/app/_components/ui/textarea"
-import { useToast } from "~/hooks/use-toast"
 import { authClient } from "~/lib/auth-client"
 import { contactSchema } from "~/lib/schemas"
 import { cn } from "~/lib/utils"
@@ -25,7 +25,6 @@ type ContactFormType = z.infer<typeof contactSchema>
 export default function ContactUs() {
     const session = authClient.useSession()
     const contactMutation = api.contact.contact.useMutation()
-    const { toast } = useToast()
     const form = useForm<ContactFormType>({
         resolver: zodResolver(contactSchema),
         defaultValues: {
@@ -46,17 +45,14 @@ export default function ContactUs() {
         const result = await contactMutation.mutateAsync(data)
 
         if (!result.success) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: "An error occurred. Please try again later",
-                variant: "destructive",
                 duration: 2000,
             })
             return
         }
 
-        toast({
-            title: "Email sent successfully!",
+        toast.success("Email sent successfully!", {
             duration: 2000,
         })
         form.reset()

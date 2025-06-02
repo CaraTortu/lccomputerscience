@@ -43,13 +43,6 @@ const getColumns: () => ColumnDef<Column>[] = () => [
         ),
     },
     {
-        accessorKey: "tier",
-        cell: ({ getValue }) => getValue<string>().charAt(0).toUpperCase() + getValue<string>().slice(1),
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Tier" />
-        ),
-    },
-    {
         accessorKey: "role",
         cell: ({ getValue }) => getValue<string>().charAt(0).toUpperCase() + getValue<string>().slice(1),
         header: ({ column }) => (

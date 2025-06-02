@@ -28,17 +28,14 @@ import {
     DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu"
 import { usePathname, useRouter } from "next/navigation"
-import { useToast } from "~/hooks/use-toast"
-import { api } from "~/trpc/react"
 import { useState } from "react"
 import { type Session, type User } from "~/server/auth"
 import { authClient } from "~/lib/auth-client"
+import { toast } from "sonner"
 
 function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: boolean) => void }) {
 
-    const { toast } = useToast()
     const router = useRouter()
-    const createPortalSessionMutation = api.stripe.createPortalSession.useMutation()
 
     const logout = async () => {
         setNavOpen(false)
@@ -47,8 +44,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    toast({
-                        title: "Logged out!",
+                    toast.success("Logged out!", {
                         description: "You have been logged out successfully",
                         duration: 2000,
                     })
@@ -60,19 +56,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
     }
 
     const handleBilling = async () => {
-        setNavOpen(false)
-        const url = await createPortalSessionMutation.mutateAsync({ returnUrl: window.location.href })
-        if (!url.success || !url.url) {
-            toast({
-                title: "Error",
-                description: url.reason ?? "An error occurred. Please try again later",
-                variant: "destructive",
-                duration: 2000,
-            })
-            return
-        }
-
-        router.push(url.url)
+        return;
     }
 
     return (
@@ -97,7 +81,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" className="w-(--radix-dropdown-menu-trigger-width)" align="end" sideOffset={4}>
-                {user.tier !== "gold" && (
+                {user.tier === "free" && (
                     <>
                         <DropdownMenuGroup>
                             <Link href="/pricing" onClick={() => setNavOpen(false)}>

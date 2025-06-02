@@ -8,7 +8,6 @@ import { useTheme } from "next-themes"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "../../breadcrumb";
 import { type z } from "zod";
 import { updateLessonSchema } from "~/lib/schemas";
-import { useToast } from "~/hooks/use-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField } from "../../form";
@@ -18,6 +17,7 @@ import { Button } from "../../button";
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
 import { Save } from "lucide-react";
+import { toast } from "sonner";
 
 const MDEditor = dynamic(
     () => import("@uiw/react-md-editor"),
@@ -28,7 +28,6 @@ type EditContentSchema = z.infer<typeof updateLessonSchema>
 
 export function ContentEditor({ lesson, courseId, courseName, moduleId, moduleName }: { lesson: DBLesson, courseId: string, moduleId: string, courseName: string, moduleName: string }) {
     const theme = useTheme()
-    const { toast } = useToast()
     const router = useRouter()
     const updateLessonMutation = api.admin.updateLesson.useMutation()
 
@@ -43,15 +42,12 @@ export function ContentEditor({ lesson, courseId, courseName, moduleId, moduleNa
         const result = await updateLessonMutation.mutateAsync(data)
 
         if (result.success) {
-            toast({
-                title: "Lesson updated",
+            toast.success("Lesson updated", {
                 description: "The lesson has been updated successfully",
             })
         } else {
-            toast({
-                title: "Error updating lesson",
+            toast.error("Error updating lesson", {
                 description: "An error occurred while updating the lesson",
-                variant: "destructive"
             })
         }
 

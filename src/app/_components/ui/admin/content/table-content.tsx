@@ -10,7 +10,6 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu"
-import { useToast } from "~/hooks/use-toast";
 import { DataTable } from "../../table/data-table";
 import { DataTableColumnHeader } from "../../table/table-header";
 import Image from "next/image";
@@ -28,6 +27,7 @@ import { createCourseSchema, updateCourseSchema } from "~/lib/schemas";
 import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from "../../breadcrumb";
+import { toast } from "sonner";
 
 type Column = {
     id: string;
@@ -89,7 +89,6 @@ const getColumns: (props: { onRefresh: () => Promise<void> }) => ColumnDef<Colum
 type EditSchema = z.infer<typeof updateCourseSchema>
 
 function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Promise<void> }) {
-    const { toast } = useToast()
     const [dialogOpen, setDialogOpen] = useState(false)
     const updateMutation = api.admin.updateCourse.useMutation()
 
@@ -108,17 +107,14 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
         const result = await updateMutation.mutateAsync(data)
 
         if (!result.success) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: result.reason ?? "An error occurred. Please try again later",
-                variant: "destructive",
             })
             return
         }
 
         setDialogOpen(false)
-        toast({
-            title: "Course updated successfully",
+        toast.success("Course updated successfully", {
             duration: 2000,
         })
 
@@ -215,20 +211,16 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
 function ActionsCell({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Promise<void> }) {
     const deleteCourseMutation = api.admin.deleteCourse.useMutation();
     const [dropdownOpen, setDropdownOpen] = useState(false)
-    const { toast } = useToast()
 
     const deleteCourse = async () => {
         const deleted = await deleteCourseMutation.mutateAsync({ courseId: row.getValue<string>("id") });
         if (deleted.success) {
             await onRefresh()
-            toast({
-                title: "Course deleted successfully",
+            toast.success("Course deleted successfully", {
                 duration: 2000,
             })
         } else {
-            toast({
-                title: "Failed to delete course. Try again later.",
-                variant: "destructive",
+            toast.error("Failed to delete course. Try again later.", {
                 duration: 2000,
             })
         }
@@ -257,7 +249,6 @@ type CreateCourseSchema = z.infer<typeof createCourseSchema>
 
 function NewCourseDialog({ onRefresh }: { onRefresh: () => Promise<void> }) {
     const addNewCourseMutation = api.admin.createCourse.useMutation()
-    const { toast } = useToast()
     const [dialogOpen, setDialogOpen] = useState(false)
 
     const form = useForm<CreateCourseSchema>({
@@ -274,17 +265,14 @@ function NewCourseDialog({ onRefresh }: { onRefresh: () => Promise<void> }) {
         const result = await addNewCourseMutation.mutateAsync(data)
 
         if (!result.success) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: "An error occurred. Please try again later",
-                variant: "destructive",
             })
             return
         }
 
         setDialogOpen(false)
-        toast({
-            title: "Course added successfully",
+        toast.success("Course added successfully", {
             duration: 2000,
         })
 

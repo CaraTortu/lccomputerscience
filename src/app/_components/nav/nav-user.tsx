@@ -22,20 +22,18 @@ import {
 } from "~/app/_components/ui/dropdown-menu"
 
 import Link from "next/link"
-import { useToast } from "~/hooks/use-toast"
 import { useRouter } from "next/navigation"
-import { api } from "~/trpc/react"
 import { type User } from "~/server/auth"
 import { authClient } from "~/lib/auth-client"
+import { capitalise } from "~/lib/utils"
+import { toast } from "sonner"
 
 export function NavUser({
     user,
 }: {
-    user: User
+    user: User,
 }) {
-    const { toast } = useToast()
     const router = useRouter()
-    const createPortalSessionMutation = api.stripe.createPortalSession.useMutation()
 
     const logout = async () => {
         // By default, it refreshed the entire site which removes the toast.
@@ -43,8 +41,7 @@ export function NavUser({
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    toast({
-                        title: "Logged out!",
+                    toast.success("Logged out!", {
                         description: "You have been logged out successfully",
                         duration: 2000,
                     })
@@ -56,18 +53,7 @@ export function NavUser({
     }
 
     const handleBilling = async () => {
-        const url = await createPortalSessionMutation.mutateAsync({ returnUrl: window.location.href })
-        if (!url.success || !url.url) {
-            toast({
-                title: "Error",
-                description: url.reason ?? "An error occurred. Please try again later",
-                variant: "destructive",
-                duration: 2000,
-            })
-            return
-        }
-
-        router.push(url.url)
+        return
     }
 
     return (
@@ -95,22 +81,22 @@ export function NavUser({
                         </Avatar>
                         {user.name ? (
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-semibold capitalize">{user.name} - {user.tier}</span>
+                                <span className="truncate font-semibold capitalize">{user.name} - {capitalise(user.tier)}</span>
                                 <span className="truncate text-xs">{user.email}</span>
                             </div>
                         ) : (
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-semibold">{user.email}</span>
-                                <span className="truncate text-xs capitalize">{user.tier}</span>
+                                <span className="truncate text-xs capitalize">{capitalise(user.tier)}</span>
                             </div>
                         )}
                     </div>
                 </DropdownMenuLabel>
-                {user.tier !== "gold" && (
+                {user.tier === "free" && (
                     <>
                         <DropdownMenuSeparator />
                         < DropdownMenuGroup >
-                            <Link href="/pricing"prefetch={false}>
+                            <Link href="/pricing" prefetch={false}>
                                 <DropdownMenuItem>
                                     <Sparkles />
                                     Upgrade Account

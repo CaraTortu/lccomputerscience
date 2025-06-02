@@ -1,18 +1,8 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { type Tier } from "~/server/db";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
-}
-
-export function isAllowedTier(userTier: Tier, contentTier: Tier) {
-    const tierOrder = ["free", "bronze", "silver", "gold"];
-
-    const userIndex = tierOrder.indexOf(userTier);
-    const contentIndex = tierOrder.indexOf(contentTier);
-
-    return userIndex >= contentIndex;
 }
 
 export function toDatetime(epoch: number) {
@@ -45,4 +35,8 @@ export function getBaseUrl() {
     if (process.env.NEXT_PUBLIC_WEB_URL) return process.env.NEXT_PUBLIC_WEB_URL;
     if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
     return `http://localhost:${process.env.PORT ?? 3000}`;
+}
+
+export function capitalise(s: string) {
+    return s.at(0)!.toUpperCase() + s.slice(1);
 }

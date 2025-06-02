@@ -5,11 +5,16 @@ import { env } from "~/env";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
 import { sendPasswordResetEmail, sendVerificationEmail } from "../emails";
-import * as bcrypt from "bcrypt-ts";
-import { checkHash } from "./utils";
 import { user } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { getBaseUrl } from "~/lib/utils";
+import Stripe from "stripe";
+import { stripe } from "@better-auth/stripe";
+import { type SubscriptionType } from "~/lib/types";
+
+export const stripeClient = new Stripe(env.STRIPE_SECRET_KEY, {
+    apiVersion: "2025-05-28.basil",
+});
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -17,7 +22,9 @@ export const auth = betterAuth({
     }),
     baseURL: getBaseUrl(),
     advanced: {
-        generateId: false,
+        database: {
+            generateId: false,
+        },
     },
     account: {
         accountLinking: {
@@ -58,16 +65,6 @@ export const auth = betterAuth({
         sendResetPassword: async ({ user, url }, _req) => {
             await sendPasswordResetEmail(user, url);
         },
-        password: {
-            hash: async (password) => {
-                return await bcrypt
-                    .genSalt(12)
-                    .then((salt) => bcrypt.hash(password, salt));
-            },
-            verify: async ({ hash, password }) => {
-                return await checkHash(password, hash);
-            },
-        },
     },
     socialProviders: {
         google: {
@@ -89,7 +86,43 @@ export const auth = betterAuth({
         },
     },
 
-    plugins: [admin(), nextCookies()],
+    plugins: [
+        admin(),
+        nextCookies(),
+        stripe({
+            stripeClient,
+            stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET,
+            createCustomerOnSignUp: true,
+            subscription: {
+                enabled: true,
+                plans: async () => await db.query.stripePlans.findMany(),
+                onSubscriptionComplete: async ({ subscription, plan }) => {
+                    // Update tier for the user
+                    await db
+                        .update(user)
+                        .set({ tier: plan.name as SubscriptionType })
+                        .where(
+                            eq(
+                                user.stripeCustomerId,
+                                subscription.stripeCustomerId!,
+                            ),
+                        );
+                },
+                onSubscriptionCancel: async ({ subscription }) => {
+                    // Set users tier to free
+                    await db
+                        .update(user)
+                        .set({ tier: "free" })
+                        .where(
+                            eq(
+                                user.stripeCustomerId,
+                                subscription.stripeCustomerId!,
+                            ),
+                        );
+                },
+            },
+        }),
+    ],
 });
 
 // Export types

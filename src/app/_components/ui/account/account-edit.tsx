@@ -9,11 +9,11 @@ import { Form, FormField } from "../form"
 import { Label } from "../label"
 import { Input } from "../input"
 import { Button } from "../button"
-import { useToast } from "~/hooks/use-toast"
 import { authClient } from "~/lib/auth-client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { KeyIcon, UserPenIcon } from "lucide-react"
+import { toast } from "sonner"
 
 const editAccountSchema = z.object({
     name: z.string().nonempty("Name is required"),
@@ -29,7 +29,6 @@ type AccountEditProps = {
 }
 
 export default function AccountEdit({ user }: AccountEditProps) {
-    const { toast } = useToast()
     const router = useRouter()
     const form = useForm({
         resolver: zodResolver(editAccountSchema),
@@ -48,17 +47,14 @@ export default function AccountEdit({ user }: AccountEditProps) {
             })
 
             if (result.error) {
-                toast({
-                    title: "Error",
+                toast.error("Error", {
                     description: result.error.message ?? "An error occurred. Please try again later.",
-                    variant: "destructive",
                     duration: 2000,
                 })
                 return
             }
 
-            toast({
-                title: "Success",
+            toast.success("Success", {
                 description: "Email updated successfully",
                 duration: 2000,
             })
@@ -77,17 +73,14 @@ export default function AccountEdit({ user }: AccountEditProps) {
         })
 
         if (result.error) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: result.error.message ?? "An error occurred. Please try again later.",
-                variant: "destructive",
                 duration: 2000,
             })
             return
         }
 
-        toast({
-            title: "Success",
+        toast.success("Success", {
             description: "Account updated successfully",
             duration: 2000,
         })
