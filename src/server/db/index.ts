@@ -1,5 +1,11 @@
 import { drizzle } from "drizzle-orm/neon-http";
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
+import ws from "ws";
+import {
+    neon,
+    neonConfig,
+    type NeonQueryFunction,
+    type WebSocketConstructor,
+} from "@neondatabase/serverless";
 
 import { env } from "~/env";
 import * as schema from "./schema";
@@ -13,18 +19,32 @@ const globalForDb = globalThis as unknown as {
     conn: NeonQueryFunction<false, false> | undefined;
 };
 
-const conn = globalForDb.conn ?? neon(env.NEON_DATABASE_URL);
+const connectionString = env.NEON_DATABASE_URL;
+if (
+    env.NODE_ENV === "development" ||
+    connectionString.includes("db.localtest.me")
+) {
+    neonConfig.fetchEndpoint = (host) => {
+        const [protocol, port] =
+            host === "db.localtest.me" ? ["http", 4444] : ["https", 443];
+        return `${protocol}://${host}:${port}/sql`;
+    };
+    const connectionStringUrl = new URL(connectionString);
+    neonConfig.useSecureWebSocket =
+        connectionStringUrl.hostname !== "db.localtest.me";
+    neonConfig.wsProxy = (host) =>
+        host === "db.localtest.me" ? `${host}:4444/v2` : `${host}/v2`;
+}
+neonConfig.webSocketConstructor = ws as WebSocketConstructor;
+
+const conn = globalForDb.conn ?? neon(connectionString);
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
-export const db = drizzle(conn, { schema });
+export const db = drizzle({ client: conn, schema });
 
 // Export types
 export type Tier = (typeof schema.userTierEnum.enumValues)[number];
 export type UserType = (typeof schema.userTypeEnum.enumValues)[number];
-
-export type StripeTier = (typeof schema.productTier.enumValues)[number];
-export type StripeSubscriptionStatus =
-    (typeof schema.stripeSubscriptionStatus.enumValues)[number];
 
 export type DBUser = InferSelectModel<typeof schema.user>;
 export type DBCourse = InferSelectModel<typeof schema.courses>;

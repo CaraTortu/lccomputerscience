@@ -1,9 +1,9 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { contactRouter } from "./routers/contact";
-import { stripeRouter } from "./routers/stripe";
 import { courseRouter } from "./routers/course";
 import { adminRouter } from "./routers/admin";
 import { userRouter } from "./routers/user";
+import { stripeRouter } from "./routers/stripe";
 
 /**
  * This is the primary router for your server.
@@ -14,8 +14,8 @@ export const appRouter = createTRPCRouter({
     user: userRouter,
     admin: adminRouter,
     course: courseRouter,
-    stripe: stripeRouter,
     contact: contactRouter,
+    stripe: stripeRouter,
 });
 
 // export type definition of API

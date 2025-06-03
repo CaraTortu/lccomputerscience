@@ -2,7 +2,6 @@ import { relations } from "drizzle-orm";
 import {
     boolean,
     integer,
-    jsonb,
     pgEnum,
     pgTableCreator,
     text,
@@ -16,15 +15,11 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = pgTableCreator((name) => `compsciguy_${name}`);
+export const createTable = pgTableCreator(
+    (name) => `lccomputerscience_${name}`,
+);
 
-export const userTierEnum = pgEnum("user_tier", [
-    "free",
-    "bronze",
-    "silver",
-    "gold",
-]);
-
+export const userTierEnum = pgEnum("user_tier", ["free", "pro"]);
 export const userTypeEnum = pgEnum("user_type", ["user", "admin"]);
 
 export const user = createTable("user", {
@@ -41,6 +36,7 @@ export const user = createTable("user", {
     banned: boolean("banned").default(false),
     banReason: text("ban_reason"),
     banExpires: timestamp("ban_expires"),
+    stripeCustomerId: text("stripe_customer_id"),
     lastLoginAt: timestamp("last_login_at"),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -252,124 +248,30 @@ export const lessonsRelations = relations(lessons, ({ one }) => ({
  * STRIPE
  */
 
-export const stripeCustomers = createTable("stripe_customer", {
-    userId: text("user_id")
+export const subscription = createTable("subscription", {
+    id: text("id")
+        .primaryKey()
         .notNull()
-        .references(() => user.id),
-    stripeCustomerId: varchar("stripe_customer_id", { length: 255 })
-        .notNull()
-        .primaryKey(),
-    billingAddress: jsonb("billing_address"),
-    paymentMethod: jsonb("payment_method"),
+        .$defaultFn(() => crypto.randomUUID()),
+    plan: text("plan"),
+    referenceId: text("referenceId"),
+    stripeCustomerId: text("stripeCustomerId"),
+    stripeSubscriptionId: text("stripeSubscriptionId"),
+    status: text("status"),
+    periodStart: timestamp("periodStart", { mode: "date" }),
+    periodEnd: timestamp("periodEnd", { mode: "date" }),
+    cancelAtPeriodEnd: boolean("cancelAtPeriodEnd").default(false),
+    seats: integer("seats"),
+    trialStart: timestamp("trialStart", { mode: "date" }),
+    trialEnd: timestamp("trialEnd", { mode: "date" }),
 });
 
-export const stripeCustomersRelations = relations(
-    stripeCustomers,
-    ({ one }) => ({
-        user: one(user, {
-            fields: [stripeCustomers.userId],
-            references: [user.id],
-        }),
-    }),
-);
-
-export const productTier = pgEnum("product_tier", ["bronze", "silver", "gold"]);
-
-export const stripeProducts = createTable("stripe_product", {
-    id: varchar("stripe_product_id", { length: 255 }).notNull().primaryKey(),
-    name: varchar("name", { length: 255 }).notNull(),
-    description: text("description"),
-    tier: productTier("tier").notNull().unique(),
-    active: boolean("active").notNull().default(true),
-    metadata: jsonb("metadata").$type<Record<string, string>>(),
+export const stripePlans = createTable("stripePlans", {
+    id: text("id")
+        .primaryKey()
+        .notNull()
+        .$defaultFn(() => crypto.randomUUID()),
+    name: text("name").notNull(),
+    price: integer("price").notNull(),
+    priceId: text("priceId").notNull().unique(),
 });
-
-export const stripeProductsRelations = relations(
-    stripeProducts,
-    ({ many }) => ({
-        prices: many(stripePrices),
-    }),
-);
-
-export const pricingType = pgEnum("pricing_type", ["recurring", "one_time"]);
-export const pricingInterval = pgEnum("pricing_interval", [
-    "day",
-    "week",
-    "month",
-    "year",
-]);
-
-export const stripePrices = createTable("stripe_price", {
-    id: varchar("stripe_price_id", { length: 255 }).notNull().primaryKey(),
-    productId: varchar("stripe_product_id", { length: 255 })
-        .notNull()
-        .references(() => stripeProducts.id),
-    active: boolean("active").notNull().default(true),
-    description: text("description"),
-    unitAmount: integer("unit_amount"),
-    currency: varchar("currency", { length: 3 }).notNull(),
-    type: pricingType("type").notNull(),
-    interval: pricingInterval("interval"),
-    intervalCount: integer("interval_count"),
-    trialPeriodDays: integer("trial_period_days"),
-    metadata: jsonb("metadata"),
-});
-
-export const stripePricesRelations = relations(stripePrices, ({ one }) => ({
-    product: one(stripeProducts, {
-        fields: [stripePrices.productId],
-        references: [stripeProducts.id],
-    }),
-}));
-
-export const stripeSubscriptionStatus = pgEnum("stripe_subscription_status", [
-    "trialing",
-    "active",
-    "past_due",
-    "canceled",
-    "incomplete",
-    "incomplete_expired",
-    "unpaid",
-    "paused",
-]);
-
-export const stripeSubscriptions = createTable("stripe_subscription", {
-    id: varchar("stripe_subscription_id", { length: 255 })
-        .notNull()
-        .primaryKey(),
-    userId: text("user_id")
-        .notNull()
-        .references(() => user.id),
-    status: stripeSubscriptionStatus("subscription_status").notNull(),
-    priceId: varchar("stripe_price_id", { length: 255 })
-        .notNull()
-        .references(() => stripePrices.id),
-    created: timestamp("created", { mode: "date" }).notNull().defaultNow(),
-    cancelAtPeriodEnd: boolean("cancel_at_period_end").notNull().default(false),
-    currentPeriodStart: timestamp("current_period_start", { mode: "date" })
-        .notNull()
-        .defaultNow(),
-    currentPeriodEnd: timestamp("current_period_end", {
-        mode: "date",
-    }).notNull(),
-    endedAt: timestamp("ended_at", { mode: "date" }),
-    cancelAt: timestamp("cancel_at", { mode: "date" }),
-    canceledAt: timestamp("canceled_at", { mode: "date" }),
-    trialStart: timestamp("trial_start", { mode: "date" }),
-    trialEnd: timestamp("trial_end", { mode: "date" }),
-    metadata: jsonb("metadata"),
-});
-
-export const stripeSubscriptionsRelations = relations(
-    stripeSubscriptions,
-    ({ one }) => ({
-        user: one(user, {
-            fields: [stripeSubscriptions.userId],
-            references: [user.id],
-        }),
-        price: one(stripePrices, {
-            fields: [stripeSubscriptions.priceId],
-            references: [stripePrices.id],
-        }),
-    }),
-);

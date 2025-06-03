@@ -1,5 +1,4 @@
 import { type Config } from "drizzle-kit";
-
 import { env } from "~/env";
 
 export default {
@@ -8,5 +7,5 @@ export default {
     dbCredentials: {
         url: env.NEON_DATABASE_URL,
     },
-    tablesFilter: ["compsciguy_*"],
+    tablesFilter: ["lccomputerscience_*"],
 } satisfies Config;

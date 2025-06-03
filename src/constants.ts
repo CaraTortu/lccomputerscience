@@ -3,6 +3,7 @@
  */
 
 import { BookIcon, type LucideIcon, UserIcon } from "lucide-react";
+import { type SubscriptionType } from "./lib/types";
 
 export type NavbarLinkType = {
     name: string;
@@ -63,4 +64,32 @@ export const adminLinks: (NavbarLinkType & { icon: LucideIcon })[] = [
         url: "/admin/users",
         icon: UserIcon,
     },
+];
+
+/**
+ * Stripe plans
+ */
+export const planFeatures: Record<SubscriptionType, string[]> = {
+    free: [
+        "Access to core tutorials",
+        "Basic practice questions",
+        "Progress tracking",
+        "Limited access to past exam papers",
+    ],
+    pro: [
+        "All free plan features",
+        "Full library of tutorials and exercises",
+        "Unlimited access to past exam papers",
+        "Priority support",
+    ],
+};
+
+export const planComparison = [
+    { name: "Access to core tutorials", free: true, pro: true },
+    { name: "Basic practice questions", free: true, pro: true },
+    { name: "Progress tracking", free: true, pro: true },
+    { name: "Full access to past exam papers", free: false, pro: true },
+    { name: "Full library of tutorials and exercises", free: false, pro: true },
+    { name: "Unlimited access to past exam papers", free: false, pro: true },
+    { name: "Priority support", free: false, pro: true },
 ];

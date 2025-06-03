@@ -1,155 +1,37 @@
-import { z } from "zod";
+import { stripeClient } from "~/server/auth";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { productTier, stripePrices, stripeProducts } from "~/server/db/schema";
-import { getOrCreateCustomer } from "~/server/stripe/handlers";
-import type Stripe from "stripe";
-import { eq } from "drizzle-orm";
-import { calculateTrialEndUnixTimestamp, getBaseUrl } from "~/lib/utils";
+import { z } from "zod";
 
 export const stripeRouter = createTRPCRouter({
-    createCheckoutSession: protectedProcedure
+    getBillingPortalUrl: protectedProcedure
         .input(
             z.object({
-                tier: z.enum(productTier.enumValues),
+                returnUrl: z.string().url().optional(),
             }),
         )
-        .mutation(async ({ ctx, input }) => {
-            // Get the customer
-            const customer = await getOrCreateCustomer(ctx.session.user.id);
+        .mutation(async ({ ctx: { session }, input }) => {
+            const stripeCustomerId = session.user.stripeCustomerId;
 
-            if (!customer) {
+            if (!stripeCustomerId) {
                 return {
                     success: false,
-                    reason: "Error creating customer.",
+                    reason: "No stripe customer ID found for this user",
                 };
             }
 
-            // Get the product
-            const product = await ctx.db.query.stripeProducts.findFirst({
-                where: eq(stripeProducts.tier, input.tier),
-                with: {
-                    prices: {
-                        where: eq(stripePrices.active, true),
-                    },
-                },
-            });
-
-            if (!product) {
-                return {
-                    success: false,
-                    reason: "Product not found.",
-                };
-            }
-
-            if (product.prices.length === 0) {
-                return {
-                    success: false,
-                    reason: "Price not found. Please contact an admin",
-                };
-            }
-
-            const productPrice = product.prices[0]!;
-
-            // Create a checkout session
-            let checkoutSessionParams: Stripe.Checkout.SessionCreateParams = {
-                allow_promotion_codes: true,
-                billing_address_collection: "required",
-                customer,
-                customer_update: {
-                    address: "auto",
-                },
-                line_items: [
-                    {
-                        price: productPrice.id,
-                        quantity: 1,
-                    },
-                ],
-                cancel_url: `${getBaseUrl()}/pricing`,
-                success_url: `${getBaseUrl()}/pricing`,
-            };
-
-            // Check for one off or recurring payment
-            if (productPrice.type === "recurring") {
-                checkoutSessionParams = {
-                    ...checkoutSessionParams,
-                    mode: "subscription",
-                    subscription_data: {
-                        trial_end: calculateTrialEndUnixTimestamp(
-                            productPrice.trialPeriodDays,
-                        ),
-                        metadata: {
-                            customerId: customer,
-                        },
-                    },
-                };
-            } else {
-                checkoutSessionParams = {
-                    ...checkoutSessionParams,
-                    mode: "payment",
-                };
-            }
-
-            // Create the session
-            let session: Stripe.Checkout.Session;
             try {
-                session = await ctx.stripe.checkout.sessions.create(
-                    checkoutSessionParams,
-                );
-            } catch (err) {
-                if (err instanceof Error) {
-                    console.log(`[-] Error creating session: ${err.message}`);
-                }
-
-                return {
-                    success: false,
-                    reason: "Error creating session.",
-                };
-            }
-
-            return {
-                success: true,
-                sessionId: session.id,
-            };
-        }),
-    createPortalSession: protectedProcedure
-        .input(z.object({ returnUrl: z.string().optional() }))
-        .mutation(async ({ ctx, input }) => {
-            // Get the customer
-            const customer = await getOrCreateCustomer(ctx.session.user.id);
-
-            if (!customer) {
-                return {
-                    success: false,
-                    reason: "Error creating customer.",
-                };
-            }
-
-            // Create a portal session
-            let url: string;
-            try {
-                const portalSessionParams =
-                    await ctx.stripe.billingPortal.sessions.create({
-                        customer,
+                const { url } =
+                    await stripeClient.billingPortal.sessions.create({
+                        customer: stripeCustomerId,
                         return_url: input.returnUrl,
                     });
 
-                url = portalSessionParams.url;
-            } catch (err) {
-                if (err instanceof Error) {
-                    console.log(
-                        `[-] Error creating portal session: ${err.message}`,
-                    );
-                }
-
+                return { success: true, url };
+            } catch {
                 return {
                     success: false,
-                    reason: "Error creating portal session.",
+                    reason: "Could not create billing portal session",
                 };
             }
-
-            return {
-                success: true,
-                url,
-            };
         }),
 });

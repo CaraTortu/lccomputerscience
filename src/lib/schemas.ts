@@ -128,7 +128,7 @@ export const updateUserSchema = z.object({
     email: z.string().email("Invalid email address"),
     emailVerified: z.boolean(),
     image: z.string().url("Image URL is invalid").nullable(),
-    tier: z.enum(["free", "bronze", "silver", "gold"]),
+    tier: z.enum(["free", "pro"]),
     role: z.enum(["user", "admin"]),
 });
 

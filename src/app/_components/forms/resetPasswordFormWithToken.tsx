@@ -7,10 +7,10 @@ import { Label } from "../ui/label"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormField } from "../ui/form"
-import { useToast } from "~/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { passwordVerificationSchema } from "~/lib/schemas"
 import { authClient } from "~/lib/auth-client"
+import { toast } from "sonner"
 
 const resetPasswordSchema = z.object({
     newPassword: passwordVerificationSchema,
@@ -19,7 +19,6 @@ const resetPasswordSchema = z.object({
 type ResetPasswordFormType = z.infer<typeof resetPasswordSchema>
 
 export default function ResetPasswordFormWithToken({ token }: { token: string }) {
-    const { toast } = useToast()
     const router = useRouter()
 
     const form = useForm<ResetPasswordFormType>({
@@ -36,17 +35,14 @@ export default function ResetPasswordFormWithToken({ token }: { token: string })
         })
 
         if (result.error) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: result.error.message ?? "An error occurred. Please try again later",
-                variant: "destructive",
                 duration: 2000,
             })
             return
         }
 
-        toast({
-            title: "Password reset successful",
+        toast.success("Password reset successful", {
             duration: 2000,
         })
 

@@ -13,39 +13,35 @@ import { Input } from "../../input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../select";
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "../../avatar";
-import { useToast } from "~/hooks/use-toast";
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogDescription } from "../../dialog";
 import { authClient } from "~/lib/auth-client";
 import { Popover, PopoverContent, PopoverTrigger } from "../../popover";
-import { cn } from "~/lib/utils";
+import { capitalise, cn } from "~/lib/utils";
 import { format } from "date-fns"
 import { Calendar } from "../../calendar";
+import { toast } from "sonner";
 
 type UpdateUserSchema = z.infer<typeof updateUserSchema>;
 
 function DeleteUser({ user }: { user: DBUser }) {
     const [open, setOpen] = useState(false);
-    const { toast } = useToast();
     const router = useRouter();
 
     const deleteUser = async () => {
         const result = await authClient.admin.removeUser({ userId: user.id });
 
         if (result.error) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: result.error.message ?? "An error occurred while deleting the user",
                 duration: 2000,
-                variant: "destructive",
             });
 
             return
         }
 
-        toast({
-            title: "User deleted",
+        toast.success("User deleted", {
             description: "User has been deleted",
             duration: 2000,
         });
@@ -79,7 +75,6 @@ type BanUserSchema = z.infer<typeof banUserSchema>;
 
 function BanUser({ user }: { user: DBUser }) {
     const [open, setOpen] = useState(false);
-    const { toast } = useToast();
     const router = useRouter();
 
     const tomorrow = new Date();
@@ -102,22 +97,19 @@ function BanUser({ user }: { user: DBUser }) {
         });
 
         if (result.error) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: result.error.message ?? "An error occurred while banning the user",
                 duration: 2000,
-                variant: "destructive",
             });
 
             return
         }
 
-        toast({
-            title: "User banned",
+        toast.success("User banned", {
             description: "User has been banned",
             duration: 2000,
         });
-        router.refresh()    
+        router.refresh()
     }
 
 
@@ -191,7 +183,6 @@ function BanUser({ user }: { user: DBUser }) {
 export function UserEdit({ user }: { user: DBUser }) {
     const [changed, setChanged] = useState(false);
     const userEditMutation = api.admin.updateUser.useMutation();
-    const { toast } = useToast();
     const router = useRouter();
 
     const form = useForm<UpdateUserSchema>({
@@ -201,7 +192,7 @@ export function UserEdit({ user }: { user: DBUser }) {
             name: user.name,
             email: user.email,
             emailVerified: user.emailVerified,
-            image: user.image ?? null, 
+            image: user.image ?? null,
             tier: user.tier,
             role: user.role as "user" | "admin",
         },
@@ -216,19 +207,16 @@ export function UserEdit({ user }: { user: DBUser }) {
         const result = await userEditMutation.mutateAsync(data);
 
         if (result.success) {
-            setChanged(false);
             router.refresh()
-            toast({
-                title: "User updated!",
+            toast.success("User updated!", {
                 description: "User has been updated successfully",
                 duration: 2000,
             });
+            setChanged(false);
         } else {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: "An error occurred while updating the user",
                 duration: 2000,
-                variant: "destructive",
             });
         }
     }
@@ -237,18 +225,15 @@ export function UserEdit({ user }: { user: DBUser }) {
         const result = await authClient.admin.unbanUser({ userId: user.id });
 
         if (result.error) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: result.error.message ?? "An error occurred while unbanning the user",
                 duration: 2000,
-                variant: "destructive",
             });
 
             return
         }
 
-        toast({
-            title: "User unbanned",
+        toast.error("User unbanned", {
             description: "User has been unbanned",
             duration: 2000,
         });
@@ -282,12 +267,12 @@ export function UserEdit({ user }: { user: DBUser }) {
                             <li><span className="font-bold">Last login:</span> {user.lastLoginAt ? user.lastLoginAt.toUTCString() : "User has never logged in"}</li>
                             <li><span className="font-bold">Email verified:</span> {user.emailVerified ? <span className="text-green-400">Yes</span> : <span className="text-red-400">No</span>}</li>
                             <li><span className="font-bold">Tier:</span> {user.tier}</li>
-                            <li><span className="font-bold">Banned:</span> {user.banned ? <span className="text-green-400">Yes, until {user.banExpires?.toDateString()} because &quot;{user.banReason}&quot;</span>: <span className="text-red-400">No</span>}</li>
+                            <li><span className="font-bold">Banned:</span> {user.banned ? <span className="text-green-400">Yes, until {user.banExpires?.toDateString()} because &quot;{user.banReason}&quot;</span> : <span className="text-red-400">No</span>}</li>
                         </div>
                     </div>
                     <Separator />
-                    <div className="grid grid-cols-3 pt-8">
-                        <div className="flex">
+                    <div className="grid grid-cols-3 pt-8 gap-4">
+                        <div className="flex gap-4">
                             <div className="flex flex-col gap-4 w-full max-w-md py-8">
                                 <h1 className="text-xl font-semibold pb-4">Profile</h1>
                                 <FormField
@@ -374,9 +359,9 @@ export function UserEdit({ user }: { user: DBUser }) {
                                                     <SelectValue placeholder={user.tier} />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {["free", "bronze", "silver", "gold"].map((tier) => (
+                                                    {["free", "pro"].map((tier) => (
                                                         <SelectItem key={tier} value={tier}>
-                                                            {tier.charAt(0).toUpperCase() + tier.slice(1)}
+                                                            {capitalise(tier)}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -407,7 +392,7 @@ export function UserEdit({ user }: { user: DBUser }) {
                                             <SelectContent>
                                                 {["user", "admin"].map((role) => (
                                                     <SelectItem key={role} value={role}>
-                                                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                                                        {capitalise(role)}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

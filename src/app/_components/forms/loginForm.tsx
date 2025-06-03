@@ -7,10 +7,10 @@ import { Label } from "../ui/label"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormField } from "../ui/form"
-import { useToast } from "~/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { authClient } from "~/lib/auth-client"
 import { Checkbox } from "../ui/checkbox"
+import { toast } from "sonner"
 
 const loginSchema = z.object({
     email: z.string().email("Invalid email address"),
@@ -21,7 +21,6 @@ const loginSchema = z.object({
 type LoginFormType = z.infer<typeof loginSchema>
 
 export default function LoginForm() {
-    const { toast } = useToast()
     const router = useRouter()
 
     const form = useForm<LoginFormType>({
@@ -46,16 +45,13 @@ export default function LoginForm() {
                     message = "Please verify your email address"
                 }
 
-                toast({
-                    title: "Error",
+                toast.error("Error", {
                     description: message,
-                    variant: "destructive",
                     duration: 2000,
                 })
             },
             onSuccess: () => {
-                toast({
-                    title: "Login successful",
+                toast.success("Login successful", {
                     duration: 2000,
                 })
 

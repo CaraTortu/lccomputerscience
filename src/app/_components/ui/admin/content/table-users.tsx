@@ -6,6 +6,7 @@ import { type ColumnDef, type Row } from "@tanstack/react-table"
 import { DataTable } from "../../table/data-table";
 import { DataTableColumnHeader } from "../../table/table-header";
 import { useRouter } from "next/navigation";
+import { capitalise } from "~/lib/utils";
 
 type Column = {
     id: string;
@@ -43,15 +44,8 @@ const getColumns: () => ColumnDef<Column>[] = () => [
         ),
     },
     {
-        accessorKey: "tier",
-        cell: ({ getValue }) => getValue<string>().charAt(0).toUpperCase() + getValue<string>().slice(1),
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title="Tier" />
-        ),
-    },
-    {
         accessorKey: "role",
-        cell: ({ getValue }) => getValue<string>().charAt(0).toUpperCase() + getValue<string>().slice(1),
+        cell: ({ getValue }) => capitalise(getValue<string>()),
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Role" />
         ),

@@ -13,7 +13,6 @@ import { ZodError } from "zod";
 
 import { auth } from "~/server/auth";
 import { db } from "~/server/db";
-import { stripe } from "../stripe";
 
 /**
  * 1. CONTEXT
@@ -133,7 +132,6 @@ export const protectedProcedure = t.procedure
             ctx: {
                 // infers the `session` as non-nullable
                 session: { ...ctx.session, user: ctx.session.user },
-                stripe,
             },
         });
     });
@@ -153,7 +151,6 @@ export const adminProcedure = t.procedure
             ctx: {
                 // infers the `session` as non-nullable
                 session: { ...ctx.session, user: ctx.session.user },
-                stripe,
             },
         });
     });

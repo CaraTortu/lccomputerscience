@@ -56,7 +56,7 @@ async function CourseContents({ courseId }: { courseId: string }) {
 
 async function CourseContentsFallback() {
     return (
-        <Card className="animate-pulse">
+        <Card>
             <CardHeader className="gap-4">
                 <div className="w-[60%] h-6 bg-gray-300 dark:bg-gray-900 rounded-lg"></div>
                 <div className="w-[40%] h-4 bg-gray-300 dark:bg-gray-900 rounded-lg"></div>
@@ -125,7 +125,7 @@ async function CourseProgressFallback() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Course Progress</CardTitle>
+                <div className="w-[40%] h-4 bg-gray-300 dark:bg-gray-900 rounded-lg"></div>
             </CardHeader>
             <CardContent>
                 <div className="w-full h-4 bg-gray-300 dark:bg-gray-900 rounded-lg"></div>
@@ -145,23 +145,29 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
     const courseId = (await params).courseId;
 
     return (
-        <div className="flex-grow h-full container mx-auto py-8 px-8 md:px-4">
-            <Link href="/content" className="flex items-center text-blue-500 hover:underline mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Content
+        <div className="flex-grow h-full container mx-auto pb-8 pt-4 md:pb-4 px-8 md:px-4">
+            <Link href="/content" className="flex items-center mb-8 md:mb-4">
+                <Button variant={"link"} className="text-lg md:text-sm text-purple-200/80">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Content
+                </Button>
             </Link>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2">
+
+            <div className="flex flex-col-reverse md:flex-row gap-6">
+                {/* Course Contents on the left in desktop, bottom in mobile */}
+                <div className="md:flex-[2] grow">
                     <Suspense fallback={<CourseContentsFallback />}>
                         <CourseContents courseId={courseId} />
                     </Suspense>
                 </div>
-                <div>
+
+                {/* Course Progress on the right in desktop, top in mobile */}
+                <div className="md:flex-[1] max-w-xl w-full">
                     <Suspense fallback={<CourseProgressFallback />}>
                         <CourseProgress courseId={courseId} />
                     </Suspense>
                 </div>
             </div>
-        </div >
+        </div>
     )
 }

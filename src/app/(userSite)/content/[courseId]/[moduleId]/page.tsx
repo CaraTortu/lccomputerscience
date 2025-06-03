@@ -60,7 +60,7 @@ async function ModulePageContents({ params }: { params: Promise<{ courseId: stri
                 </div>
                 <div className="space-y-4">
                     {courseLessons.map((lesson, index) => (
-                        <Card key={lesson.id} className={lesson.completed ? "bg-green-100/50 dark:bg-gray-900" : ""}>
+                        <Card key={lesson.id} className={lesson.completed ? "bg-green-900/10" : ""}>
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <CardTitle className="text-md font-medium">
                                     {index + 1}. {lesson.name}
@@ -131,10 +131,12 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
     const courseId = (await params).courseId;
 
     return (
-        <div className="grow h-full container mx-auto py-8 px-8 md:px-4">
-            <Link href={`/content/${courseId}`} className="flex items-center text-blue-500 hover:underline mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Course
+        <div className="grow h-full container mx-auto pb-8 pt-4 md:pb-4 px-8 md:px-4">
+            <Link href={`/content/${courseId}`} className="flex items-center mb-8 md:mb-4">
+                <Button variant={"link"} className="text-lg md:text-sm text-purple-200/80">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Course
+                </Button>
             </Link>
             <Suspense fallback={<ModulePageFallback />}>
                 <ModulePageContents params={params} />

@@ -7,15 +7,14 @@ import { Label } from "../ui/label"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormField } from "../ui/form"
-import { useToast } from "~/hooks/use-toast"
 import { useRouter } from "next/navigation"
 import { registrationSchema } from "~/lib/schemas"
 import { authClient } from "~/lib/auth-client"
+import { toast } from "sonner"
 
 type RegistrationFormType = z.infer<typeof registrationSchema>
 
 export default function RegisterForm() {
-    const { toast } = useToast()
     const router = useRouter()
 
     const form = useForm<RegistrationFormType>({
@@ -35,17 +34,14 @@ export default function RegisterForm() {
         })
 
         if (result.error) {
-            toast({
-                title: "Error",
+            toast.error("Error", {
                 description: result.error.message ?? "Something went wrong, please try again later",
-                variant: "destructive",
                 duration: 2000,
             })
             return
         }
 
-        toast({
-            title: "Account created successfully! Please check your email to verify your account",
+        toast.success("Account created successfully! Please check your email to verify your account", {
             duration: 2000,
         })
 

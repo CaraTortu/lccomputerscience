@@ -3,14 +3,12 @@
 import { MenuIcon } from "lucide-react"
 import { Button } from "../ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger } from "../ui/sheet"
-import Image from "next/image"
 import { ThemeToggle } from "../theme/theme-toggle"
 import { adminLinks, navbarLinks } from "~/constants"
 import Link from "next/link"
 import {
     BadgeCheck,
     ChevronsUpDown,
-    CreditCard,
     LogOut,
     Sparkles,
 } from "lucide-react"
@@ -28,17 +26,17 @@ import {
     DropdownMenuTrigger,
 } from "~/app/_components/ui/dropdown-menu"
 import { usePathname, useRouter } from "next/navigation"
-import { useToast } from "~/hooks/use-toast"
-import { api } from "~/trpc/react"
 import { useState } from "react"
 import { type Session, type User } from "~/server/auth"
 import { authClient } from "~/lib/auth-client"
+import { toast } from "sonner"
+import { webConfig } from "~/lib/toggles"
+import { BillingButton } from "./handle-billing"
+import { capitalise } from "~/lib/utils"
 
 function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: boolean) => void }) {
 
-    const { toast } = useToast()
     const router = useRouter()
-    const createPortalSessionMutation = api.stripe.createPortalSession.useMutation()
 
     const logout = async () => {
         setNavOpen(false)
@@ -47,8 +45,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
         await authClient.signOut({
             fetchOptions: {
                 onSuccess: () => {
-                    toast({
-                        title: "Logged out!",
+                    toast.success("Logged out!", {
                         description: "You have been logged out successfully",
                         duration: 2000,
                     })
@@ -57,22 +54,6 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                 }
             }
         })
-    }
-
-    const handleBilling = async () => {
-        setNavOpen(false)
-        const url = await createPortalSessionMutation.mutateAsync({ returnUrl: window.location.href })
-        if (!url.success || !url.url) {
-            toast({
-                title: "Error",
-                description: url.reason ?? "An error occurred. Please try again later",
-                variant: "destructive",
-                duration: 2000,
-            })
-            return
-        }
-
-        router.push(url.url)
     }
 
     return (
@@ -85,8 +66,8 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                     </Avatar>
                     {user.name ? (
                         <div className="flex flex-col">
-                            <p>{user.name}</p>
-                            <p className="text-xs">{user.email}</p>
+                            <p className="flex items-start">{user.name} - {capitalise(user.tier)}</p>
+                            <p className="flex items-start text-xs">{user.email}</p>
                         </div>
                     ) : (
                         <p>{user.email}</p>
@@ -97,7 +78,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" className="w-(--radix-dropdown-menu-trigger-width)" align="end" sideOffset={4}>
-                {user.tier !== "gold" && (
+                {user.tier === "free" && (
                     <>
                         <DropdownMenuGroup>
                             <Link href="/pricing" onClick={() => setNavOpen(false)}>
@@ -117,10 +98,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                             Account
                         </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem onClick={() => handleBilling()}>
-                        <CreditCard />
-                        Billing
-                    </DropdownMenuItem>
+                    <BillingButton />
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => logout()}>
@@ -143,9 +121,17 @@ export default function MobileNav({ session }: { session: Session | null }) {
                     <MenuIcon />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col bg-sidebar text-sidebar-foreground">
+            <SheetContent side="left" className="flex flex-col bg-sidebar text-sidebar-foreground p-4 pt-8">
                 <SheetTitle className="flex w-full justify-center">
-                    <Image src="/images/toplogo.png" alt="LC Computer Science" width={250} height={100} />
+                    <div className="flex items-center gap-2">
+                        <div className="relative size-8 bg-purple-700 rounded-md text-white font-bold text-lg flex items-center justify-center shadow-lg">
+                            <span className="animate-pulse">L</span>
+                            <span className="absolute top-1 left-5 text-xs text-purple-300 animate-bounce">C</span>
+                        </div>
+                        <div className="text-white font-extrabold text-2xl tracking-tight">
+                            <span className="text-purple-400">Computer</span><span className="text-purple-200">Science</span>
+                        </div>
+                    </div>
                 </SheetTitle>
                 <SheetDescription></SheetDescription>
                 <div className="flex flex-col grow gap-4">
@@ -170,7 +156,7 @@ export default function MobileNav({ session }: { session: Session | null }) {
 
                     <div className="flex justify-end items-center gap-4 h-12">
                         {session && <MobileUserNav user={session.user} setNavOpen={(open) => setNavOpen(open)} />}
-                        <ThemeToggle className="h-12 w-12" />
+                        {webConfig.multiTheme && <ThemeToggle className="h-12 w-12" />}
                     </div>
                 </div>
             </SheetContent>
