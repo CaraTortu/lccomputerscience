@@ -9,7 +9,6 @@ import Link from "next/link"
 import {
     BadgeCheck,
     ChevronsUpDown,
-    CreditCard,
     LogOut,
     Sparkles,
 } from "lucide-react"

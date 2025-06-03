@@ -2,7 +2,6 @@
 import {
     BadgeCheck,
     ChevronDown,
-    CreditCard,
     LogOut,
     Sparkles,
 } from "lucide-react"
