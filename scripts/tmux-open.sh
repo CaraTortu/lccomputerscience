@@ -7,6 +7,7 @@ tmux send-keys -t lccomputerscience 'nvim .' C-m
 
 tmux new-window -t lccomputerscience
 tmux rename-window -t lccomputerscience 'RUN'
+tmux send-keys -t lccomputerscience 'cd scripts && docker compose start && cd ..' C-m
 tmux send-keys -t lccomputerscience 'bun run dev' C-m
 
 tmux split-window -h -t lccomputerscience

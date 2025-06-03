@@ -3,6 +3,7 @@ import { contactRouter } from "./routers/contact";
 import { courseRouter } from "./routers/course";
 import { adminRouter } from "./routers/admin";
 import { userRouter } from "./routers/user";
+import { stripeRouter } from "./routers/stripe";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
     admin: adminRouter,
     course: courseRouter,
     contact: contactRouter,
+    stripe: stripeRouter,
 });
 
 // export type definition of API

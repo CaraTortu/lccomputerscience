@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
+import { Button } from "~/app/_components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/app/_components/ui/card";
 import { ModulePageContent } from "~/app/_components/ui/content/lesson-content";
 
@@ -27,10 +28,12 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
 
 
     return (
-        <div className="grow h-full container mx-auto py-8 px-8 md:px-4 flex flex-col">
-            <Link href={`/content/${courseId}/${moduleId}`} className="flex items-center text-blue-500 hover:underline mb-4">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Module
+        <div className="grow h-full container mx-auto pb-8 pt-4 md:pb-4 px-8 md:px-4 flex flex-col">
+            <Link href={`/content/${courseId}/${moduleId}`} className="flex items-center mb-8 md:mb-4">
+                <Button variant={"link"} className="text-lg md:text-sm text-purple-200/80">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Module
+                </Button>
             </Link>
             <Suspense fallback={<ModuleContentFallback />}>
                 <ModulePageContent params={params} />

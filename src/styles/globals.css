@@ -139,7 +139,7 @@
 }
 
 .mdPost {
-    @apply flex flex-col h-full grow p-4 gap-4;
+    @apply flex flex-col h-full grow gap-4;
 }
 
 .mdPost h1,

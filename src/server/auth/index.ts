@@ -21,6 +21,7 @@ export const auth = betterAuth({
         provider: "pg",
     }),
     baseURL: getBaseUrl(),
+    trustedOrigins: ["http://192.168.1.121:3000"],
     advanced: {
         database: {
             generateId: false,

@@ -12,8 +12,8 @@ export default async function Content() {
         <div className="grow flex flex-col w-full p-8 items-center">
             <div className="mb-8 max-w-7xl w-full flex flex-col gap-8">
                 <div>
-                    <h1 className="text-4xl font-bold tracking-tight mb-4">Our Courses</h1>
-                    <p className="text-xl text-muted-foreground max-w-2xl">
+                    <h1 className="text-2xl md:text-4xl font-bold tracking-tight mb-4">Our Courses</h1>
+                    <p className="md:text-xl text-muted-foreground max-w-2xl">
                         Discover our comprehensive collection of courses designed to help you master modern web development
                         technologies.
                     </p>

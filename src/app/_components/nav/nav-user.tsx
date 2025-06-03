@@ -27,6 +27,7 @@ import { type User } from "~/server/auth"
 import { authClient } from "~/lib/auth-client"
 import { capitalise } from "~/lib/utils"
 import { toast } from "sonner"
+import { BillingButton } from "./handle-billing"
 
 export function NavUser({
     user,
@@ -52,9 +53,6 @@ export function NavUser({
         })
     }
 
-    const handleBilling = async () => {
-        return
-    }
 
     return (
         <DropdownMenu modal={false}>
@@ -113,10 +111,7 @@ export function NavUser({
                             Account
                         </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem onClick={() => handleBilling()}>
-                        <CreditCard />
-                        Billing
-                    </DropdownMenuItem>
+                    <BillingButton />
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => logout()}>

@@ -32,6 +32,8 @@ import { type Session, type User } from "~/server/auth"
 import { authClient } from "~/lib/auth-client"
 import { toast } from "sonner"
 import { webConfig } from "~/lib/toggles"
+import { BillingButton } from "./handle-billing"
+import { capitalise } from "~/lib/utils"
 
 function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: boolean) => void }) {
 
@@ -55,10 +57,6 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
         })
     }
 
-    const handleBilling = async () => {
-        return;
-    }
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger className="grow" asChild>
@@ -69,8 +67,8 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                     </Avatar>
                     {user.name ? (
                         <div className="flex flex-col">
-                            <p>{user.name}</p>
-                            <p className="text-xs">{user.email}</p>
+                            <p className="flex items-start">{user.name} - {capitalise(user.tier)}</p>
+                            <p className="flex items-start text-xs">{user.email}</p>
                         </div>
                     ) : (
                         <p>{user.email}</p>
@@ -101,10 +99,7 @@ function MobileUserNav({ user, setNavOpen }: { user: User, setNavOpen: (open: bo
                             Account
                         </DropdownMenuItem>
                     </Link>
-                    <DropdownMenuItem onClick={() => handleBilling()}>
-                        <CreditCard />
-                        Billing
-                    </DropdownMenuItem>
+                    <BillingButton />
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => logout()}>
