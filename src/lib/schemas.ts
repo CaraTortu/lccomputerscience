@@ -84,6 +84,7 @@ export const createCourseSchema = z.object({
         .max(200, "Description must be less than 200 characters"),
     image: z.string().url("Image URL is invalid"),
     status: z.enum(["active", "archived", "disabled", "draft"]),
+    free: z.boolean(),
 });
 
 /**

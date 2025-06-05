@@ -43,7 +43,7 @@ async function CourseContents({ courseId }: { courseId: string }) {
                             <Card>
                                 <CardHeader>
                                     <CardTitle className="text-md">{module.name}</CardTitle>
-                                    <CardDescription>{module.lessons.length} lessons</CardDescription>
+                                    <CardDescription>{module.lessons} lessons</CardDescription>
                                 </CardHeader>
                             </Card>
                         </Link>

@@ -24,13 +24,9 @@ export function CoursesGrid({ courses }: { courses: ContentType[] }) {
     )
 }
 
-function CourseCard({ course: oldCourse }: { course: ContentType }) {
+function CourseCard({ course }: { course: ContentType }) {
     const router = useRouter()
-    // TODO: MAKE THIS IN THE DB
-    const course = {
-        ...oldCourse,
-        free: false
-    }
+
 
     const handleCardClick = () => {
         router.push(`/content/${course.id}`)
@@ -74,12 +70,18 @@ function CourseCard({ course: oldCourse }: { course: ContentType }) {
                     <Badge variant={getStatusBadgeVariant(course.status)} className="capitalize">
                         {course.status}
                     </Badge>
-                    {course.free && (
+                    {course.free ? (
                         <Badge
                             variant="outline"
                             className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
                         >
                             Free
+                        </Badge>
+                    ) : (
+                        <Badge
+                            variant="secondary"
+                        >
+                            Pro
                         </Badge>
                     )}
                 </div>
