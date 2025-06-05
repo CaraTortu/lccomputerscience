@@ -17,7 +17,6 @@ import {
     updateModuleSchema,
     updateUserSchema,
 } from "~/lib/schemas";
-import { auth } from "~/server/auth";
 
 export const adminRouter = createTRPCRouter({
     /**

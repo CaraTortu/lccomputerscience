@@ -28,7 +28,6 @@ import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList } from "../../breadcrumb";
 import { toast } from "sonner";
-import { Checkbox } from "../../checkbox";
 
 type Column = {
     id: string;
