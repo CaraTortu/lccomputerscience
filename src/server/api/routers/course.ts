@@ -50,6 +50,10 @@ export const courseRouter = createTRPCRouter({
 
             return {
                 ...course,
+                modules: course.modules.map((m) => ({
+                    ...m,
+                    lessons: m.lessons.length,
+                })),
                 courseLength,
                 students,
             };

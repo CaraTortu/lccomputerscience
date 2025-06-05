@@ -27,7 +27,9 @@ export const stripeRouter = createTRPCRouter({
                     });
 
                 return { success: true, url };
-            } catch {
+            } catch (err) {
+                console.error("STRIPE ERROR: ", err);
+
                 return {
                     success: false,
                     reason: "Could not create billing portal session",

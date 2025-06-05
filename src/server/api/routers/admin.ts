@@ -113,6 +113,7 @@ export const adminRouter = createTRPCRouter({
                     description: input.description,
                     status: input.status,
                     image: input.image,
+                    free: input.free,
                 })
                 .where(eq(courses.id, input.id))
                 .execute();
@@ -129,6 +130,7 @@ export const adminRouter = createTRPCRouter({
                     description: input.description,
                     status: input.status,
                     image: input.image,
+                    free: input.free,
                 })
                 .returning();
 
@@ -280,6 +282,8 @@ export const adminRouter = createTRPCRouter({
                 .where(eq(user.id, input.id))
                 .returning();
 
-            return { success: result.length > 0 };
+            const success = result.length > 0;
+
+            return { success };
         }),
 });

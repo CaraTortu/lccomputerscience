@@ -67,6 +67,13 @@ const getColumns: (props: { onRefresh: () => Promise<void> }) => ColumnDef<Colum
         ),
     },
     {
+        accessorKey: "free",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Free" />
+        ),
+        cell: ({ row }) => row.getValue<boolean>("free") ? "Yes" : "No"
+    },
+    {
         accessorKey: "enrolledUsers",
         header: ({ column }) => (
             <DataTableColumnHeader column={column} title="Users Enrolled" />
@@ -100,6 +107,7 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
             description: row.getValue<string>("description"),
             image: row.getValue<string>("image"),
             status: row.getValue<EditSchema["status"]>("status"),
+            free: row.getValue<boolean>("free"),
         }
     })
 
@@ -177,27 +185,49 @@ function EditDialog({ row, onRefresh }: { row: Row<Column>, onRefresh: () => Pro
                             )}
                         />
 
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field, fieldState }) => (
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="status">Status</Label>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="active">Active</SelectItem>
-                                            <SelectItem value="archived">Archived</SelectItem>
-                                            <SelectItem value="disabled">Disabled</SelectItem>
-                                            <SelectItem value="draft">Draft</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
-                                </div>
-                            )}
-                        />
+                        <div className="flex gap-4">
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field, fieldState }) => (
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="status">Status</Label>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a status" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="active">Active</SelectItem>
+                                                <SelectItem value="archived">Archived</SelectItem>
+                                                <SelectItem value="disabled">Disabled</SelectItem>
+                                                <SelectItem value="draft">Draft</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
+                                    </div>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="free"
+                                render={({ field, fieldState }) => (
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="status">Free</Label>
+                                        <Select onValueChange={(e) => field.onChange(e === "yes")} defaultValue={field.value ? "yes" : "no"}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a status" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="yes">Yes</SelectItem>
+                                                <SelectItem value="no">No</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
+                                    </div>
+                                )}
+                            />
+                        </div>
 
                         <Button type="submit">Save</Button>
                     </form>
@@ -258,6 +288,7 @@ function NewCourseDialog({ onRefresh }: { onRefresh: () => Promise<void> }) {
             description: "",
             image: "",
             status: "draft",
+            free: false
         }
     })
 
@@ -337,27 +368,49 @@ function NewCourseDialog({ onRefresh }: { onRefresh: () => Promise<void> }) {
                             )}
                         />
 
-                        <FormField
-                            control={form.control}
-                            name="status"
-                            render={({ field, fieldState }) => (
-                                <div className="flex flex-col gap-2">
-                                    <Label htmlFor="status">Status</Label>
-                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a status" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="active">Active</SelectItem>
-                                            <SelectItem value="archived">Archived</SelectItem>
-                                            <SelectItem value="disabled">Disabled</SelectItem>
-                                            <SelectItem value="draft">Draft</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                    <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
-                                </div>
-                            )}
-                        />
+                        <div className="flex gap-4">
+                            <FormField
+                                control={form.control}
+                                name="status"
+                                render={({ field, fieldState }) => (
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="status">Status</Label>
+                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a status" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="active">Active</SelectItem>
+                                                <SelectItem value="archived">Archived</SelectItem>
+                                                <SelectItem value="disabled">Disabled</SelectItem>
+                                                <SelectItem value="draft">Draft</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
+                                    </div>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="free"
+                                render={({ field, fieldState }) => (
+                                    <div className="flex flex-col gap-2">
+                                        <Label htmlFor="status">Free</Label>
+                                        <Select onValueChange={(e) => field.onChange(e === "yes")} defaultValue={field.value ? "yes" : "no"}>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select a status" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="yes">Yes</SelectItem>
+                                                <SelectItem value="no">No</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-red-500 text-sm">{fieldState.error?.message}</p>
+                                    </div>
+                                )}
+                            />
+                        </div>
 
                         <Button type="submit">Save</Button>
                     </form>

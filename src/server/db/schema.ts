@@ -179,6 +179,7 @@ export const courses = createTable("courses", {
     description: text("description"),
     image: varchar("image", { length: 255 }).notNull(),
     status: courseStatusEnum("status").notNull().default("active"),
+    free: boolean("free").default(false).notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { mode: "date", precision: 3 })
         .notNull()
