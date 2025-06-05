@@ -1,0 +1,1 @@
+ALTER TABLE "lccomputerscience_courses" ADD COLUMN "free" boolean DEFAULT false NOT NULL;

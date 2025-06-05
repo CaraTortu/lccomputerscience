@@ -5,7 +5,7 @@ import { auth } from "~/server/auth";
 import { db } from "~/server/db";
 import { courses } from "~/server/db/schema";
 
-export default async function CourseMiddleware({ params, children }: { params: { courseId: string }, children: React.ReactNode }) {
+export default async function CourseMiddleware({ params, children }: { params: Promise<{ courseId: string }>, children: React.ReactNode }) {
     const session = await auth.api.getSession({
         headers: await headers(),
     })
@@ -17,7 +17,7 @@ export default async function CourseMiddleware({ params, children }: { params: {
     const userTier = session.user.tier
 
     // Get module
-    const { courseId } = params
+    const { courseId } = await params
 
     const courseModule = await db.query.courses.findFirst({
         where: eq(courses.id, courseId),
